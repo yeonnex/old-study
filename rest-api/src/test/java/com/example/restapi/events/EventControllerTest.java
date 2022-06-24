@@ -1,5 +1,6 @@
 package com.example.restapi.events;
 
+import com.example.restapi.common.TestDescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -24,12 +25,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class EventControllerTest {
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     ObjectMapper objectMapper;
 
     @Test
     @DisplayName("이벤트 생성하기")
+    @TestDescription("이벤트 생성하기")
     void createEvent() throws Exception {
         EventDto event = EventDto.builder()
                 .name("Spring")

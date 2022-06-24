@@ -29,9 +29,6 @@ public class EventControllerTest {
     MockMvc mockMvc;
 
     @Autowired
-    EventRepository eventRepository;
-
-    @Autowired
     ObjectMapper objectMapper;
 
     @Test
@@ -70,4 +67,35 @@ public class EventControllerTest {
                 .andExpect(jsonPath("eventStatus").value(Matchers.not(EventStatus.PUBLISHED)))
         ;
     }
+    @Test
+    @DisplayName("입력값 이외의 값이 들어왔을 때 예외 발생시키기")
+    void createEvent_Bad_Request() throws Exception{
+        Event event = Event.builder()
+                .id(200L)
+                .name("Spring")
+                .description("REST API with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2022, 6, 23, 15, 56))
+                .endEventDateTime(LocalDateTime.of(2022, 6, 24, 15, 56))
+                .beginEventDateTime(LocalDateTime.of(2022, 6, 25, 12, 30))
+                .endEventDateTime(LocalDateTime.of(2022, 6, 26, 12, 30))
+                .basePrice(100)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("강남역 D2 스타트업 팩토리")
+                .free(true)
+                .offline(false)
+                .eventStatus(EventStatus.PUBLISHED)
+                .build();
+
+        mockMvc.perform(post("/api/events")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(event)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+
+        ;
+    }
+
+
 }

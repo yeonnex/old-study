@@ -33,4 +33,55 @@ class EventTest {
         assertThat(event.getName()).isEqualTo(name);
         assertThat(event.getDescription()).isEqualTo(description);
     }
+
+    @Test
+    @DisplayName("offline 과 free 값 업데이트하여 엔티티 필드에 비즈니스 로직 적용")
+    void updateBizEvent() {
+
+        // Given
+        Event event = Event.builder()
+                .basePrice(0)
+                .maxPrice(0)
+                .build();
+        // When
+        event.update();
+
+        // Then
+        assertThat(event.isFree()).isTrue();
+
+        //Given
+        event = Event.builder()
+                .basePrice(100)
+                .maxPrice(0)
+                .build();
+
+        // When
+        event.update();
+
+        // Then
+        assertThat(event.isFree()).isFalse();
+
+        //Given
+        event = Event.builder()
+                .basePrice(0)
+                .maxPrice(100)
+                .build();
+
+        // When
+        event.update();
+
+        // Then
+        assertThat(event.isFree()).isFalse();
+
+        // Given
+        event = Event.builder()
+                .location("낙성대 오렌지 연필")
+                .build();
+        // When
+        event.update();
+
+        // Then
+        assertThat(event.isOffline()).isTrue();
+
+    }
 }

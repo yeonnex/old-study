@@ -57,12 +57,13 @@ public class EventControllerTest {
                 .andExpect(jsonPath("description").value("REST API with Spring"))
                 .andExpect(jsonPath("id").value(Matchers.not(200))) // TODO 200L 로 하면 매칭되지 않음. 즉 반환되는 값은 Long 이 아니라 Integer 인 것...
                 .andExpect(jsonPath("free").value(Matchers.not(true)))
+                .andExpect(jsonPath("offline").value(true))
                 .andExpect(jsonPath("eventStatus").value(Matchers.not(EventStatus.PUBLISHED)))
         ;
     }
     @Test
     @DisplayName("입력값 이외의 값이 들어왔을 때 예외 발생시키기")
-    void createEvent_Bad_Request() throws Exception{
+    void createEvent_Bad_Request() throws Exception {
         Event event = Event.builder()
                 .id(200L)
                 .name("Spring")
@@ -158,7 +159,5 @@ public class EventControllerTest {
         ;
 
     }
-
-
 
 }

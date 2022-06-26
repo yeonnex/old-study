@@ -12,7 +12,6 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -127,6 +126,37 @@ public class EventControllerTest {
         )
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("에러 응답에 에러 정보 담아 응답하기")
+    void createEvent_Bad_Request_Return_ErrorMsg() throws Exception {
+        EventDto eventDto = EventDto.builder()
+                .name("Spring")
+                .description("REST API with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2022, 6, 24, 15, 56))
+                .endEnrollmentDateTime(LocalDateTime.of(2022, 6, 23, 15, 56))
+                .beginEventDateTime(LocalDateTime.of(2022, 6, 26, 12, 30))
+                .endEventDateTime(LocalDateTime.of(2022, 6, 25, 12, 30))
+                .basePrice(1000)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("강남역 D2 스타트업 팩토리")
+                .build();
+
+        mockMvc.perform(post("/api/events")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(eventDto))
+        )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].objectName").exists())
+                .andExpect(jsonPath("$[0].field").exists())
+                .andExpect(jsonPath("$[0].code").exists())
+                .andExpect(jsonPath("$[0].rejectedValue").exists())
+        ;
+
     }
 
 

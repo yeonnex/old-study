@@ -17,7 +17,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -70,7 +75,56 @@ public class EventControllerTest {
                 .andExpect(jsonPath("_links.update-event").exists())
 
                 // RestDocs 문서 생성
-                .andDo(document("create-event"))
+                .andDo(document("create-event", // 요청 본문, 응답 본문 문서화
+                  links( // 링크 문서화
+                                        linkWithRel("self").description("link to self"),
+                                                    linkWithRel("query-events").description("link to query events"),
+                                                    linkWithRel("update-event").description("link to update event")
+                                ),
+                            requestHeaders( // 요청 헤더 문서화
+                                    headerWithName(HttpHeaders.CONTENT_TYPE).description("content type"),
+                                               headerWithName(HttpHeaders.ACCEPT).description("accept header")
+
+                            ),
+                            requestFields( // 요청 필드 문서화
+                                    fieldWithPath("name").description("name of event"),
+                                    fieldWithPath("description").description("description of event"),
+                                    fieldWithPath("beginEnrollmentDateTime").description("begin date time of event enrollment"),
+                                    fieldWithPath("endEnrollmentDateTime").description("end date time of event enrollment"),
+                                    fieldWithPath("beginEventDateTime").description("begin date time of event"),
+                                    fieldWithPath("endEventDateTime").description("end date time of event"),
+                                    fieldWithPath("location").description("location of event"),
+                                    fieldWithPath("basePrice").description("base price of event"),
+                                    fieldWithPath("maxPrice").description("max price of event"),
+                                    fieldWithPath("limitOfEnrollment").description("limit number of event enrollment")
+                            ),
+                            responseHeaders( // 응답 헤더 문서화
+                                        headerWithName(HttpHeaders.LOCATION).description("location"),
+                                        headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+                            ),
+                            responseFields( // 응답 필드 문서화
+                                    fieldWithPath("id").description("id of new event"),
+                                    fieldWithPath("name").description("name of new event"),
+                                    fieldWithPath("description").description("description of new event"),
+                                    fieldWithPath("beginEnrollmentDateTime").description("begin date time of new event enrollment"),
+                                    fieldWithPath("endEnrollmentDateTime").description("end date time of new event enrollment"),
+                                    fieldWithPath("beginEventDateTime").description("begin date time of new event"),
+                                    fieldWithPath("endEventDateTime").description("end date time of new event"),
+                                    fieldWithPath("location").description("location of new event"),
+                                    fieldWithPath("basePrice").description("base price of new event"),
+                                    fieldWithPath("maxPrice").description("max price of new event"),
+                                    fieldWithPath("limitOfEnrollment").description("limit number of new event enrollment"),
+                                    fieldWithPath("offline").description("whether offline or not"),
+                                    fieldWithPath("free").description("whether free or not"),
+                                    fieldWithPath("eventStatus").description("status of new event"),
+
+                                    fieldWithPath("_links.self.href").description("link to self"),
+                                    fieldWithPath("_links.query-events.href").description("link to query events"),
+                                    fieldWithPath("_links.update-event.href").description("link to update event")
+                            )
+
+                ))
+
         ;
     }
     @Test

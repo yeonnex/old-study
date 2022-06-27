@@ -1,5 +1,6 @@
 package com.example.restapi.events;
 
+import com.example.restapi.common.ErrorsResource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -30,15 +31,15 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) throws JsonProcessingException {
-
-        if (errors.hasErrors()){
-            return ResponseEntity.badRequest().build();
+        if (errors.hasErrors()) {
+            return badRequest(errors);
         }
 
         eventValidator.validate(eventDto, errors);
 
+        // Type = org.springframework.http.converter.HttpMessageNotWritableException
         if (errors.hasErrors()) {
-            return ResponseEntity.badRequest().body(errors); // 커스텀한 serializer 를 만들어 등록해주었기 때문에, Errors 타입을 json 으로 변환 가능.
+            return badRequest(errors);
         }
 
         Event event = modelMapper.map(eventDto, Event.class);
@@ -52,5 +53,10 @@ public class EventController {
         eventResource.add(linkTo(EventController.class).slash(savedEvent.getId()).withRel("update-event"));
         eventResource.add(Link.of("http://localhost:8080/docs/index.html#resources-events-create").withRel("profile"));
         return ResponseEntity.created(createdUri).body(eventResource);
+    }
+
+    private ResponseEntity<ErrorsResource> badRequest(Errors errors) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorsResource(errors));
     }
 }

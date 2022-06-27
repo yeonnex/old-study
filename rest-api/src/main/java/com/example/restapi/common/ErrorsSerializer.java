@@ -14,6 +14,7 @@ public class ErrorsSerializer extends JsonSerializer<Errors> {
     public void serialize(Errors errors,
                           JsonGenerator jGen,
                           SerializerProvider serializerProvider) throws IOException {
+        jGen.writeFieldName("errors");
         jGen.writeStartArray();
 
         // 필드 에러 field error

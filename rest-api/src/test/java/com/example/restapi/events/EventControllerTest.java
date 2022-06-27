@@ -121,7 +121,6 @@ public class EventControllerTest {
                                     fieldWithPath("offline").description("whether offline or not"),
                                     fieldWithPath("free").description("whether free or not"),
                                     fieldWithPath("eventStatus").description("status of new event"),
-
                                     fieldWithPath("_links.self.href").description("link to self"),
                                     fieldWithPath("_links.query-events.href").description("link to event list"),
                                     fieldWithPath("_links.update-event.href").description("link to update event"),
@@ -223,10 +222,10 @@ public class EventControllerTest {
         )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].objectName").exists())
-                .andExpect(jsonPath("$[0].field").exists())
-                .andExpect(jsonPath("$[0].code").exists())
-                .andExpect(jsonPath("$[0].rejectedValue").exists())
+                .andExpect(jsonPath("errors[0].objectName").exists())
+                .andExpect(jsonPath("errors[0].field").exists())
+                .andExpect(jsonPath("errors[0].code").exists())
+                .andExpect(jsonPath("errors[0].rejectedValue").exists())
         ;
 
     }

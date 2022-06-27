@@ -73,13 +73,15 @@ public class EventControllerTest {
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.query-events").exists())
                 .andExpect(jsonPath("_links.update-event").exists())
+                .andExpect(jsonPath("_links.profile").exists())
 
                 // RestDocs 문서 생성
                 .andDo(document("create-event", // 요청 본문, 응답 본문 문서화
                   links( // 링크 문서화
                                         linkWithRel("self").description("link to self"),
-                                                    linkWithRel("query-events").description("link to query events"),
-                                                    linkWithRel("update-event").description("link to update event")
+                                                    linkWithRel("query-events").description("link to event list"),
+                                                    linkWithRel("update-event").description("link to update event"),
+                                                    linkWithRel("profile").description("link to profile")
                                 ),
                             requestHeaders( // 요청 헤더 문서화
                                     headerWithName(HttpHeaders.CONTENT_TYPE).description("content type"),
@@ -119,8 +121,9 @@ public class EventControllerTest {
                                     fieldWithPath("eventStatus").description("status of new event"),
 
                                     fieldWithPath("_links.self.href").description("link to self"),
-                                    fieldWithPath("_links.query-events.href").description("link to query events"),
-                                    fieldWithPath("_links.update-event.href").description("link to update event")
+                                    fieldWithPath("_links.query-events.href").description("link to event list"),
+                                    fieldWithPath("_links.update-event.href").description("link to update event"),
+                                    fieldWithPath("_links.profile.href").description("link to profile")
                             )
 
                 ))

@@ -4,8 +4,10 @@ import com.example.restapi.common.RestDocsConfiguration;
 import com.example.restapi.common.TestDescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.hibernate.event.spi.EvictEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,12 +20,16 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -39,6 +45,12 @@ public class EventControllerTest {
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    ModelMapper modelMapper;
+
+    @Autowired
+    EventRepository eventRepository;
 
     @Test
     @DisplayName("이벤트 생성하기")
@@ -228,6 +240,38 @@ public class EventControllerTest {
                 .andExpect(jsonPath("errors[0].rejectedValue").exists())
         ;
 
+    }
+
+    @Test
+    @DisplayName("30개의 이벤트를 한 페이지당 10개씩 뿌려주는 테스트")
+    void queryEvents() throws Exception {
+        List<Event> events = new ArrayList<>();
+
+        IntStream.range(0, 30).forEach(i -> {
+            Event event = generateEvent(i);
+            events.add(event);
+        });
+
+        List<Event> eventList = eventRepository.saveAll(events);
+
+        this.mockMvc.perform(get("/api/events")
+                .param("page", "1")
+                .param("size", "10")
+                .param("sort", "name,DESC")
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("pageable").exists())
+        ;
+
+
+    }
+
+    private Event generateEvent(int i) {
+        return Event.builder()
+                .name("Spring " + i)
+                .description("REST API with Spring")
+                .build();
     }
 
 }

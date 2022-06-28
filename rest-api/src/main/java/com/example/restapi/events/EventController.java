@@ -5,14 +5,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -54,6 +52,13 @@ public class EventController {
         eventResource.add(Link.of("http://localhost:8080/docs/index.html#resources-events-create").withRel("profile"));
         return ResponseEntity.created(createdUri).body(eventResource);
     }
+
+    @GetMapping
+    public ResponseEntity queryEvents(Pageable pageable){
+        return ResponseEntity.ok(eventRepository.findAll(pageable));
+    }
+
+
 
     private ResponseEntity<ErrorsResource> badRequest(Errors errors) {
         return ResponseEntity.badRequest()

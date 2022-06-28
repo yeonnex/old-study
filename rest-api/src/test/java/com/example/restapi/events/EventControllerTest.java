@@ -306,6 +306,27 @@ public class EventControllerTest {
 
     }
 
+
+    @Test
+    @DisplayName("기존의 이벤트를 한 건 조회한다")
+    void getEvent() throws Exception {
+        Event event = generateEvent(100);
+        Event savedEvent = eventRepository.save(event);
+
+        this.mockMvc.perform(get("/api/events/{id}", savedEvent.getId())
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("name").exists())
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.profile").exists())
+
+                // 문서화 시작
+                .andDo(document("get-event"))
+        ;
+    }
+
     private Event generateEvent(int i) {
         return Event.builder()
                 .name("Spring " + i)

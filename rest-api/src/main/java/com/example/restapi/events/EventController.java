@@ -76,6 +76,36 @@ public class EventController {
         return ResponseEntity.ok(eventResource);
     }
 
+    @PutMapping("/{id}")
+    // @Transactional
+    public ResponseEntity updateEvent(@RequestBody @Valid EventDto eventDto,
+                                      @PathVariable Long id,
+                                      Errors errors) {
+        Optional<Event> optionalEvent = eventRepository.findById(id);
+
+        if (optionalEvent.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        eventValidator.validate(eventDto, errors);
+
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Event existingEvent = optionalEvent.get();
+        modelMapper.map(eventDto, existingEvent);
+        Event savedEvent = eventRepository.save(existingEvent);
+
+        EventResource eventResource = new EventResource(savedEvent);
+        eventResource.add(Link.of("http://localhost:8080/docs/index.html#resources-events-update").withRel("profile"));
+        return ResponseEntity.ok(eventResource);
+    }
+
 
 
     private ResponseEntity<ErrorsResource> badRequest(Errors errors) {

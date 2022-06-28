@@ -1,8 +1,10 @@
 package com.example.restapi.events;
 
+import com.example.restapi.common.BaseControllerTest;
 import com.example.restapi.common.RestDocsConfiguration;
 import com.example.restapi.common.TestDescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,19 +35,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@Import(RestDocsConfiguration.class)
-@ActiveProfiles("test")
-public class EventControllerTest {
-    @Autowired
-    MockMvc mockMvc;
-    @Autowired
-    ObjectMapper objectMapper;
 
-    @Autowired
-    ModelMapper modelMapper;
+public class EventControllerTest extends BaseControllerTest {
+
 
     @Autowired
     EventRepository eventRepository;
@@ -343,44 +335,6 @@ public class EventControllerTest {
                 .eventStatus(EventStatus.DRAFT)
                 .build();
         return eventRepository.save(event);
-    }
-
-    @Test
-    @DisplayName("서연_이벤트를 수정한다")
-    // @Transactional
-    void seoyeonUpdateEvent() throws Exception {
-
-        // Given
-        EventDto eventDto = EventDto.builder()
-                .name("Spring")
-                .description("REST API with Spring")
-                .beginEnrollmentDateTime(LocalDateTime.of(2022, 6, 23, 15, 56))
-                .endEnrollmentDateTime(LocalDateTime.of(2022, 6, 24, 15, 56))
-                .beginEventDateTime(LocalDateTime.of(2022, 6, 25, 12, 30))
-                .endEventDateTime(LocalDateTime.of(2022, 6, 26, 12, 30))
-                .basePrice(100)
-                .maxPrice(200)
-                .limitOfEnrollment(100)
-                .location("강남역 D2 스타트업 팩토리")
-                .build();
-
-        Event event = modelMapper.map(eventDto, Event.class);
-        Event savedEvent = eventRepository.save(event);
-
-        Event byId = eventRepository.findById(savedEvent.getId()).get();
-        byId.setName("Rest Rest");
-        EventDto map = modelMapper.map(byId, EventDto.class);
-        // When
-        this.mockMvc.perform(put("/api/events/{id}", savedEvent.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaTypes.HAL_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(map))
-        )
-                .andDo(print())
-        // Then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("name").value("Rest Rest"))
-        ;
     }
 
     @Test

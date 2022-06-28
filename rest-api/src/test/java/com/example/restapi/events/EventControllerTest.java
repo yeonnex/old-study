@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -261,7 +260,47 @@ public class EventControllerTest {
         )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("pageable").exists())
+                .andExpect(jsonPath("page").exists())
+                .andExpect(jsonPath("_links.first").exists())
+                .andExpect(jsonPath("_links.prev").exists())
+                .andExpect(jsonPath("_links.next").exists())
+                .andExpect(jsonPath("_links.profile").exists())
+                .andExpect(jsonPath("_embedded.eventResourceList[0]._links.self").exists())
+
+                // 문서화 시작
+                .andDo(document("query-events", // http 요청, http 응답 문서화
+                    links( // 링크 문서화
+                            linkWithRel("first").description("첫번째 페이지로 가는 링크입니다"),
+                            linkWithRel("prev").description("이전 페이지로 가는 링크입니다"),
+                            linkWithRel("self").description("현재 페이지 링크입니다"),
+                            linkWithRel("next").description("다음 페이지로 가는 링크입니다"),
+                            linkWithRel("last").description("마지막 페이지로 가는 링크입니다"),
+                            linkWithRel("profile").description("API 문서 프로필로 가는 링크입니다")
+                        ),
+//                        requestHeaders( // 요청헤더 문서화 (없음)
+//
+//                        ),
+//                        requestFields( // 요청필드 문서화 (없음)
+//
+//                        ),
+                        responseHeaders( // 응답헤더 문서화
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+                        ),
+                        relaxedResponseFields( // 응답필드 문서화. responseFields 대신 relaxed 를 사용함으로써, 모든 응답 필드를 적지 않아도 문서 작성 가능하게 하였음.
+                                fieldWithPath("_embedded").description("이벤트 리스트를 담고 있습니다"),
+                                fieldWithPath("_embedded.eventResourceList").description("이벤트 리스트입니다"),
+                                fieldWithPath("_embedded.eventResourceList[0].id").description("첫번째 이벤트의 id 값"),
+                                fieldWithPath("_embedded.eventResourceList[0].name").description("첫번째 이벤트의 name 값"),
+                                fieldWithPath("_links").description("이동 가능한 링크 목록입니다"),
+                                fieldWithPath("page.size").description("현재 페이지의 이벤트 개수입니다"),
+                                fieldWithPath("page.totalElements").description("이벤트의 총 개수입니다"),
+                                fieldWithPath("page.totalPages").description("페이지의 개수입니다"),
+                                fieldWithPath("page.number").description("현재 페이지가 몇 페이지인지 나타냅니다. 0페이지부터 시작합니다. 1페이지는 두번째 페이지입니다.")
+                        )
+
+
+
+                ))
         ;
 
 

@@ -5,7 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
@@ -54,8 +56,11 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity queryEvents(Pageable pageable){
-        return ResponseEntity.ok(eventRepository.findAll(pageable));
+    public ResponseEntity queryEvents(Pageable pageable, PagedResourcesAssembler assembler){
+        Page<Event> page = eventRepository.findAll(pageable);
+        var pagedModel= assembler.toModel(page, entity -> new EventResource((Event) entity));
+        pagedModel.add(Link.of("http://localhost:8080/docs/index.html#resources-events-liste").withRel("profile"));
+        return ResponseEntity.ok(pagedModel);
     }
 
 

@@ -30,4 +30,8 @@ public class AccountService implements UserDetailsService {
     private Collection<? extends GrantedAuthority> getAuthorities(Set<AccountRole> roles) {
          return roles.stream().map(r -> new SimpleGrantedAuthority(r.toString())).collect(Collectors.toSet());
     }
+
+    public Account saveAccount(Account account) {
+        return accountRepository.save(account);
+    }
 }

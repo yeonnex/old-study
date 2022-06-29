@@ -46,3 +46,15 @@
 - **방법1. 데이터에 링크 제공** (본 프로젝트에서는 이 방법을 채택. 링크 정의 방식은 HAL)
 - 방법2. 링크 헤더나 Location 제공
 
+## 인증 처리
+각 api 를 누구나 접근할 수 없다. 특정 권한을 가진 사람만이 접근할 수 있는 api 를 설정하였다.
+
+각 요청에 유효한 액세스 토큰을 탑재하여 요청을 보내야 접근 가능한 경로가 있다. 테스트시에도 반드시 아래와
+같은 정보를 헤더에 추가하여 테스트 해야 403(권한없음) 응답이 뜨지 않는다.
+
+> mockMvc.perform(post("/api/events")
+.header(HttpHeaders.AUTHORIZATION, getBearerToken())
+.contentType(MediaType.APPLICATION_JSON)
+.accept(MediaTypes.HAL_JSON)
+.content(objectMapper.writeValueAsString(event))
+)

@@ -1,5 +1,6 @@
 package com.example.restapi.events;
 
+import com.example.restapi.accounts.Account;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -31,6 +32,9 @@ public class Event extends RepresentationModel<Event> {
 
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus = EventStatus.DRAFT;
+
+    @ManyToOne
+    private Account account;
 
     public void update() {
 

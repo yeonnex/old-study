@@ -4,6 +4,7 @@ import com.example.restapi.accounts.Account;
 import com.example.restapi.accounts.AccountRepository;
 import com.example.restapi.accounts.AccountRole;
 import com.example.restapi.accounts.AccountService;
+import com.example.restapi.common.AppProperties;
 import com.example.restapi.common.BaseControllerTest;
 import com.example.restapi.common.RestDocsConfiguration;
 import com.example.restapi.common.TestDescription;
@@ -45,7 +46,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 public class EventControllerTest extends BaseControllerTest {
-
+    @Autowired
+    AppProperties appProperties;
 
     @Autowired
     EventRepository eventRepository;
@@ -171,11 +173,10 @@ public class EventControllerTest extends BaseControllerTest {
                 .build();
         this.accountService.saveAccount(account);
 
-        String clientId = "myApp";
-        String clientSecret = "pass";
+
 
         ResultActions perform = this.mockMvc.perform(post("/oauth/token")
-                .with(httpBasic(clientId, clientSecret))
+                .with(httpBasic(appProperties.getClientId(), appProperties.getClientSecret()))
                 .param("username", username)
                 .param("password", password)
                 .param("grant_type", "password")

@@ -44,13 +44,23 @@ public class AppConfig {
             BCryptPasswordEncoder bCryptPasswordEncoder;
             @Override
             public void run(ApplicationArguments args) throws Exception {
-                Account account = Account.builder()
-                        .email("abcd@gmail.com")
-                        .password("1234")
+                // admin  저장
+                Account admin = Account.builder()
+                        .email("admin@gmail.com")
+                        .password("admin")
                         .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
                         .build();
-                account.setPassword(bCryptPasswordEncoder.encode(account.getPassword()));
-                accountService.saveAccount(account);
+                admin.setPassword(bCryptPasswordEncoder.encode(admin.getPassword()));
+                accountService.saveAccount(admin);
+
+                // user 저장
+                Account user = Account.builder()
+                        .email("user@gmail.com")
+                        .password("user")
+                        .roles(Set.of(AccountRole.USER))
+                        .build();
+                user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+                accountService.saveAccount(user);
 
             }
         };

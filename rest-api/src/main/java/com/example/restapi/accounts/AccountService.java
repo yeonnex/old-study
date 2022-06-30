@@ -24,7 +24,7 @@ public class AccountService implements UserDetailsService {
         if (account == null) {
             throw new UsernameNotFoundException(email);
         }
-        return new User(account.getEmail(), account.getPassword(), getAuthorities(account.getRoles()));
+        return new AccountAdapter(account);
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Set<AccountRole> roles) {

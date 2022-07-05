@@ -157,23 +157,17 @@ public class EventControllerTest extends BaseControllerTest {
         ;
     }
 
-    private String getBearerToken() throws Exception {
-        return "Bearer " + getAccessToken();
+    private String getBearerToken(Account account) throws Exception {
+        return "Bearer " + getAccessToken(account);
     }
 
-    private String getAccessToken() throws Exception {
-        // Given
+    private String getAccessToken(Account account) throws Exception {
         String username = "dundun@gmail.com";
         String password = "1234";
-
-        Account account = Account.builder()
-                .email(username)
-                .password(password)
-                .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
-                .build();
-        this.accountService.saveAccount(account);
-
-
+        if (account == null) {
+            createAccount(username, password);
+        }
+        // Given
 
         ResultActions perform = this.mockMvc.perform(post("/oauth/token")
                 .with(httpBasic(appProperties.getClientId(), appProperties.getClientSecret()))
@@ -447,6 +441,15 @@ public class EventControllerTest extends BaseControllerTest {
                 .eventStatus(EventStatus.DRAFT)
                 .build();
         return eventRepository.save(event);
+    }
+
+    private Account createAccount(String username, String password) {
+        Account account = Account.builder()
+                .email(username)
+                .password(password)
+                .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
+                .build();
+        return this.accountService.saveAccount(account);
     }
 
     @Test

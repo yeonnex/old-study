@@ -58,3 +58,12 @@
 .accept(MediaTypes.HAL_JSON)
 .content(objectMapper.writeValueAsString(event))
 )
+
+
+## 더 나아가기
+### 보안
+> REST API 에서의 CSRF 보안
+
+csrf 공격이란, 사용자가 자신의 의지와는 무관하게 웹 애플리케이션을 대상으로 공격자가 의도한 행동을 하게 되는 것이다.
+스프링 시큐리티의 csrf() 메서드는 csrf 토큰을 발급해서 클라이언트로부터 요청을 받을 때마다 토큰을 검증하는 방식으로 동작한다,
+브라우저 사용환경이 아니라면 비활성화해도 크게 문제가 되지 않는다. 

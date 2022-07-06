@@ -2,10 +2,7 @@ package com.example.restfulwebservice.user;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,8 +34,10 @@ public class UserService {
                 .orElseThrow(()-> new UserNotFoundException(String.format("ID [%s] Not Found", id)));
     }
 
-    public static void main(String[] args) {
-        UserService userService = new UserService();
-        System.out.println(userService.findUser(2L).getName());
+    public Boolean deleteById(Long id) {
+        User user = users.stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst().orElseThrow(()-> new UserNotFoundException(String.format("ID [%s] Not Found. Remove Refused.", id)));
+        return users.remove(user);
     }
 }

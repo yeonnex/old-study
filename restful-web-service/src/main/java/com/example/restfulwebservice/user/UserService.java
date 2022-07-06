@@ -34,7 +34,7 @@ public class UserService {
         return users.stream()
                 .filter(user -> user.getId().equals(id))
                 .findFirst()
-                .orElseThrow(()-> new IllegalArgumentException("해당 유저를 찾을 수 없음"));
+                .orElseThrow(()-> new UserNotFoundException(String.format("ID [%s] Not Found", id)));
     }
 
     public static void main(String[] args) {

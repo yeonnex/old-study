@@ -6,27 +6,18 @@ import com.example.restapi.accounts.AccountRole;
 import com.example.restapi.accounts.AccountService;
 import com.example.restapi.common.AppProperties;
 import com.example.restapi.common.BaseControllerTest;
-import com.example.restapi.common.RestDocsConfiguration;
 import com.example.restapi.common.TestDescription;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.Serializers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.boot.json.JacksonJsonParser;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +33,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 
 public class EventControllerTest extends BaseControllerTest {
@@ -86,7 +76,7 @@ public class EventControllerTest extends BaseControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaTypes.HAL_JSON)
                         .content(objectMapper.writeValueAsString(event))
-                        )
+                )
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(header().exists(HttpHeaders.LOCATION))
@@ -104,53 +94,53 @@ public class EventControllerTest extends BaseControllerTest {
 
                 // RestDocs 문서 생성
                 .andDo(document("create-event", // 요청 본문, 응답 본문 문서화
-                  links( // 링크 문서화
-                                        linkWithRel("self").description("link to self"),
-                                                    linkWithRel("query-events").description("link to event list"),
-                                                    linkWithRel("update-event").description("link to update event"),
-                                                    linkWithRel("profile").description("link to profile")
-                                ),
-                            requestHeaders( // 요청 헤더 문서화
-                                    headerWithName(HttpHeaders.CONTENT_TYPE).description("content type"),
-                                               headerWithName(HttpHeaders.ACCEPT).description("accept header")
+                        links( // 링크 문서화
+                                linkWithRel("self").description("link to self"),
+                                linkWithRel("query-events").description("link to event list"),
+                                linkWithRel("update-event").description("link to update event"),
+                                linkWithRel("profile").description("link to profile")
+                        ),
+                        requestHeaders( // 요청 헤더 문서화
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("content type"),
+                                headerWithName(HttpHeaders.ACCEPT).description("accept header")
 
-                            ),
-                            requestFields( // 요청 필드 문서화
-                                    fieldWithPath("name").description("name of event"),
-                                    fieldWithPath("description").description("description of event"),
-                                    fieldWithPath("beginEnrollmentDateTime").description("begin date time of event enrollment"),
-                                    fieldWithPath("endEnrollmentDateTime").description("end date time of event enrollment"),
-                                    fieldWithPath("beginEventDateTime").description("begin date time of event"),
-                                    fieldWithPath("endEventDateTime").description("end date time of event"),
-                                    fieldWithPath("location").description("location of event"),
-                                    fieldWithPath("basePrice").description("base price of event"),
-                                    fieldWithPath("maxPrice").description("max price of event"),
-                                    fieldWithPath("limitOfEnrollment").description("limit number of event enrollment")
-                            ),
-                            responseHeaders( // 응답 헤더 문서화
-                                        headerWithName(HttpHeaders.LOCATION).description("location"),
-                                        headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
-                            ),
-                            responseFields( // 응답 필드 문서화
-                                    fieldWithPath("id").description("id of new event"),
-                                    fieldWithPath("name").description("name of new event"),
-                                    fieldWithPath("description").description("description of new event"),
-                                    fieldWithPath("beginEnrollmentDateTime").description("begin date time of new event enrollment"),
-                                    fieldWithPath("endEnrollmentDateTime").description("end date time of new event enrollment"),
-                                    fieldWithPath("beginEventDateTime").description("begin date time of new event"),
-                                    fieldWithPath("endEventDateTime").description("end date time of new event"),
-                                    fieldWithPath("location").description("location of new event"),
-                                    fieldWithPath("basePrice").description("base price of new event"),
-                                    fieldWithPath("maxPrice").description("max price of new event"),
-                                    fieldWithPath("limitOfEnrollment").description("limit number of new event enrollment"),
-                                    fieldWithPath("offline").description("whether offline or not"),
-                                    fieldWithPath("free").description("whether free or not"),
-                                    fieldWithPath("eventStatus").description("status of new event"),
-                                    fieldWithPath("_links.self.href").description("link to self"),
-                                    fieldWithPath("_links.query-events.href").description("link to event list"),
-                                    fieldWithPath("_links.update-event.href").description("link to update event"),
-                                    fieldWithPath("_links.profile.href").description("link to profile")
-                            )
+                        ),
+                        requestFields( // 요청 필드 문서화
+                                fieldWithPath("name").description("name of event"),
+                                fieldWithPath("description").description("description of event"),
+                                fieldWithPath("beginEnrollmentDateTime").description("begin date time of event enrollment"),
+                                fieldWithPath("endEnrollmentDateTime").description("end date time of event enrollment"),
+                                fieldWithPath("beginEventDateTime").description("begin date time of event"),
+                                fieldWithPath("endEventDateTime").description("end date time of event"),
+                                fieldWithPath("location").description("location of event"),
+                                fieldWithPath("basePrice").description("base price of event"),
+                                fieldWithPath("maxPrice").description("max price of event"),
+                                fieldWithPath("limitOfEnrollment").description("limit number of event enrollment")
+                        ),
+                        responseHeaders( // 응답 헤더 문서화
+                                headerWithName(HttpHeaders.LOCATION).description("location"),
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+                        ),
+                        responseFields( // 응답 필드 문서화
+                                fieldWithPath("id").description("id of new event"),
+                                fieldWithPath("name").description("name of new event"),
+                                fieldWithPath("description").description("description of new event"),
+                                fieldWithPath("beginEnrollmentDateTime").description("begin date time of new event enrollment"),
+                                fieldWithPath("endEnrollmentDateTime").description("end date time of new event enrollment"),
+                                fieldWithPath("beginEventDateTime").description("begin date time of new event"),
+                                fieldWithPath("endEventDateTime").description("end date time of new event"),
+                                fieldWithPath("location").description("location of new event"),
+                                fieldWithPath("basePrice").description("base price of new event"),
+                                fieldWithPath("maxPrice").description("max price of new event"),
+                                fieldWithPath("limitOfEnrollment").description("limit number of new event enrollment"),
+                                fieldWithPath("offline").description("whether offline or not"),
+                                fieldWithPath("free").description("whether free or not"),
+                                fieldWithPath("eventStatus").description("status of new event"),
+                                fieldWithPath("_links.self.href").description("link to self"),
+                                fieldWithPath("_links.query-events.href").description("link to event list"),
+                                fieldWithPath("_links.update-event.href").description("link to update event"),
+                                fieldWithPath("_links.profile.href").description("link to profile")
+                        )
 
                 ))
 
@@ -180,6 +170,7 @@ public class EventControllerTest extends BaseControllerTest {
         return parser.parseMap(responseBody).get("access_token").toString();
 
     }
+
     @Test
     @DisplayName("입력값 이외의 값이 들어왔을 때 예외 발생시키기")
     void createEvent_Bad_Request() throws Exception {
@@ -201,10 +192,10 @@ public class EventControllerTest extends BaseControllerTest {
                 .build();
 
         mockMvc.perform(post("/api/events")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, getBearerToken())
-                .accept(MediaTypes.HAL_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(event)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, getBearerToken())
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(event)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
 
@@ -213,14 +204,14 @@ public class EventControllerTest extends BaseControllerTest {
 
     @Test
     @DisplayName("입력값 없이 이벤트 생성 요청시 Bad Request 응답")
-    void createEvent_Bad_Request_Empty_Input() throws  Exception{
+    void createEvent_Bad_Request_Empty_Input() throws Exception {
         EventDto eventDto = EventDto.builder().build();
         mockMvc.perform(post("/api/events")
                         .header(HttpHeaders.AUTHORIZATION, getBearerToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaTypes.HAL_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(eventDto))
-        )
+                        .content(objectMapper.writeValueAsString(eventDto))
+                )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
         ;
@@ -244,9 +235,9 @@ public class EventControllerTest extends BaseControllerTest {
         mockMvc.perform(post("/api/events")
                         .header(HttpHeaders.AUTHORIZATION, getBearerToken())
                         .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaTypes.HAL_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(eventDto))
-        )
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(eventDto))
+                )
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
@@ -268,11 +259,11 @@ public class EventControllerTest extends BaseControllerTest {
                 .build();
 
         mockMvc.perform(post("/api/events")
-                .header(HttpHeaders.AUTHORIZATION, getBearerToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaTypes.HAL_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(eventDto))
-        )
+                        .header(HttpHeaders.AUTHORIZATION, getBearerToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(eventDto))
+                )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("errors[0].objectName").exists())
@@ -296,10 +287,10 @@ public class EventControllerTest extends BaseControllerTest {
         List<Event> eventList = eventRepository.saveAll(events);
 
         this.mockMvc.perform(get("/api/events")
-                .param("page", "1")
-                .param("size", "10")
-                .param("sort", "name,DESC")
-        )
+                        .param("page", "1")
+                        .param("size", "10")
+                        .param("sort", "name,DESC")
+                )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("page").exists())
@@ -311,13 +302,13 @@ public class EventControllerTest extends BaseControllerTest {
 
                 // 문서화 시작
                 .andDo(document("query-events", // http 요청, http 응답 문서화
-                    links( // 링크 문서화
-                            linkWithRel("first").description("첫번째 페이지로 가는 링크입니다"),
-                            linkWithRel("prev").description("이전 페이지로 가는 링크입니다"),
-                            linkWithRel("self").description("현재 페이지 링크입니다"),
-                            linkWithRel("next").description("다음 페이지로 가는 링크입니다"),
-                            linkWithRel("last").description("마지막 페이지로 가는 링크입니다"),
-                            linkWithRel("profile").description("API 문서 프로필로 가는 링크입니다")
+                        links( // 링크 문서화
+                                linkWithRel("first").description("첫번째 페이지로 가는 링크입니다"),
+                                linkWithRel("prev").description("이전 페이지로 가는 링크입니다"),
+                                linkWithRel("self").description("현재 페이지 링크입니다"),
+                                linkWithRel("next").description("다음 페이지로 가는 링크입니다"),
+                                linkWithRel("last").description("마지막 페이지로 가는 링크입니다"),
+                                linkWithRel("profile").description("API 문서 프로필로 가는 링크입니다")
                         ),
                         responseHeaders( // 응답헤더 문서화
                                 headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
@@ -333,7 +324,6 @@ public class EventControllerTest extends BaseControllerTest {
                                 fieldWithPath("page.totalPages").description("페이지의 개수입니다"),
                                 fieldWithPath("page.number").description("현재 페이지가 몇 페이지인지 나타냅니다. 0페이지부터 시작합니다. 1페이지는 두번째 페이지입니다.")
                         )
-
 
 
                 ))
@@ -396,7 +386,6 @@ public class EventControllerTest extends BaseControllerTest {
                         )
 
 
-
                 ))
         ;
 
@@ -411,7 +400,7 @@ public class EventControllerTest extends BaseControllerTest {
         Event savedEvent = eventRepository.save(event);
 
         this.mockMvc.perform(get("/api/events/{id}", savedEvent.getId())
-        )
+                )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").exists())
@@ -464,10 +453,10 @@ public class EventControllerTest extends BaseControllerTest {
 
         // When & Then
         this.mockMvc.perform(put("/api/events/{id}", event.getId())
-                .header(HttpHeaders.AUTHORIZATION, getBearerToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(eventDto))
-        )
+                        .header(HttpHeaders.AUTHORIZATION, getBearerToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDto))
+                )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value(eventName))
@@ -484,17 +473,17 @@ public class EventControllerTest extends BaseControllerTest {
 
     @Test
     @DisplayName("입력값이 비어있는 경우 이벤트 수정 실패")
-    void updateEvent400_Empty() throws Exception{
+    void updateEvent400_Empty() throws Exception {
         // Given
         Event event = generateEvent(300);
         EventDto eventDto = new EventDto();
 
         // When & Then
         mockMvc.perform(put("/api/events/{id}", event.getId())
-                .header(HttpHeaders.AUTHORIZATION, getBearerToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(eventDto))
-        )
+                        .header(HttpHeaders.AUTHORIZATION, getBearerToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDto))
+                )
                 .andExpect(status().isBadRequest())
         ;
     }
@@ -510,10 +499,10 @@ public class EventControllerTest extends BaseControllerTest {
 
         // When & Then
         mockMvc.perform(put("/api/events/{id}", event.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, getBearerToken())
-                .content(objectMapper.writeValueAsString(eventDto))
-        )
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, getBearerToken())
+                        .content(objectMapper.writeValueAsString(eventDto))
+                )
                 .andExpect(status().isBadRequest())
         ;
     }
@@ -536,8 +525,6 @@ public class EventControllerTest extends BaseControllerTest {
     }
 
     // TODO  권한이 충분하지 않은 경우 403 FORBIDDEN
-
-
 
 
 }

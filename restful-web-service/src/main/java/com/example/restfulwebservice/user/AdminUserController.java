@@ -1,5 +1,7 @@
 package com.example.restfulwebservice.user;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -11,14 +13,23 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
+@RequestMapping("/admin")
 @RequiredArgsConstructor
-public class UserController {
+public class AdminUserController {
     private final UserService userService;
 
     @GetMapping("/users")
-    public List<User> retreiveAllUsers(){
+    public List<User> retrieveAllUsers(){
         List<User> users = userService.findAll();
 
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(users.stream()
+                .filter(user -> user.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new UserNotFoundException(String.format("ID [%s] Not Found", id))));
+        FilterProvider filters = new SimpleFilterProvider().addFilter("UserInfo", filter);
+
+
+        mappingJacksonValue.setFilters(filters);
         return users;
     }
 
@@ -27,24 +38,11 @@ public class UserController {
         return userService.findUser(id);
     }
 
-    @PostMapping("/users")
-    ResponseEntity<URI> createUser(@Valid @RequestBody User user) {
-        User saved = userService.saveUser(user);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(saved.getId()).toUri();
-
-        return ResponseEntity.created(location).build();
-    }
 
     @PutMapping("/users/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         return userService.updateUser(id, user);
     }
 
-    @DeleteMapping("/users/{id}")
-    public ResponseEntity<Boolean> deleteUser(@PathVariable Long id) {
-        Boolean result = userService.deleteById(id);
-        return ResponseEntity.ok(result);
-    }
+
 }

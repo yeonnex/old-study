@@ -5,8 +5,8 @@ public class Settings {
     private static Settings instance;
     private Settings(){}
 
-    // TODO 멀티 스레드에 안전하지 않다
-    public static Settings getInstance() {
+
+  public static synchronized Settings getInstance() {
         if (instance == null) {
             instance = new Settings();
         }

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <h1>SpringEL 표현식</h1>
+    <div th:text="${user.username}"></div>
+    <div th:text="${users[1].username}"></div>
+    <div th:text="${userMap['user1'].username}"></div>
+  <h1>지역변수 사용</h1>
+    <div th:with="first=${users[0]}">
+        <div>처음 사람의 이름은 <span th:text="${first.username}"></span></div>
+    </div>
+</body>
+</html>

@@ -79,6 +79,24 @@ public class BasicController {
         return "basic/operation";
     }
 
+    @GetMapping("/attribute")
+    public String attribute() {
+        return "basic/attribute";
+    }
+
+    @GetMapping("/each")
+    public String each(Model model) {
+        generateUsers(model);
+        return "basic/each";
+    }
+
+    private void generateUsers(Model model) {
+        User userA = new User("userA", 10);
+        User userB = new User("userB", 20);
+        User userC = new User("userC", 30);
+        model.addAttribute("users", List.of(userA, userB, userC));
+    }
+
     @Component("helloBean")
     static class HelloBean{
         public String hello(String data) {

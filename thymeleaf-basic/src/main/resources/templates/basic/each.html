@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <h1>기본 테이블</h1>
+<table border="1">
+    <tr>
+        <th>username</th>
+        <th>age</th>
+        <th>짝수 여부</th>
+        <th>첫번째 요소 여부</th>
+        <th>마지막 요소 여부</th>
+    </tr>
+    <tr th:each="user, userStat : ${users}">
+        <td th:text="${user.username}">username</td>
+        <td th:text="${user.age}">age</td>
+        <td th:text="${userStat.even}"></td>
+        <td th:text="${userStat.first}"></td>
+        <td th:text="${userStat.last}"></td>
+    </tr>
+</table>
+</body>
+</html>

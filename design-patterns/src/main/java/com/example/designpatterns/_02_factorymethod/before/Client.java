@@ -1,4 +1,4 @@
-package com.example.designpatterns.factorymethod.before;
+package com.example.designpatterns._02_factorymethod.before;
 
 public class Client {
     public static void main(String[] args) {

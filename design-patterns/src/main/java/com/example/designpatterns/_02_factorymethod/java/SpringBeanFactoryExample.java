@@ -1,4 +1,4 @@
-package com.example.designpatterns.factorymethod.java;
+package com.example.designpatterns._02_factorymethod.java;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

@@ -1,4 +1,4 @@
-package com.example.designpatterns.factorymethod.after;
+package com.example.designpatterns._02_factorymethod.after;
 
 public interface ShipFactory {
     default Ship orderShip(String name, String email) {

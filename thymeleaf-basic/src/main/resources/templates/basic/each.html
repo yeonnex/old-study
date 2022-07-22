@@ -13,6 +13,7 @@
         <th>짝수 여부</th>
         <th>첫번째 요소 여부</th>
         <th>마지막 요소 여부</th>
+        <th>미성년자 여부</th>
     </tr>
     <tr th:each="user, userStat : ${users}">
         <td th:text="${user.username}">username</td>
@@ -20,7 +21,30 @@
         <td th:text="${userStat.even}"></td>
         <td th:text="${userStat.first}"></td>
         <td th:text="${userStat.last}"></td>
+        <td th:text="O" th:if="${user.age lt 20}"></td>
     </tr>
 </table>
+
+  <table border="1">
+      <tr>
+          <th>username</th>
+          <th>age</th>
+          <th>짝수 여부</th>
+          <th>첫번째 요소 여부</th>
+          <th>마지막 요소 여부</th>
+          <th>미성년자 여부</th>
+      </tr>
+      <tr th:each="user, userStat : ${users}">
+          <td th:text="${user.username}">username</td>
+          <td th:text="${user.age}">age</td>
+          <td th:text="${userStat.even}"></td>
+          <td th:text="${userStat.first}"></td>
+          <td th:text="${userStat.last}"></td>
+          <td th:switch="${user.age}">
+              <span th:case="10">10살</span>
+              <span th:case="*">기타</span>
+          </td>
+      </tr>
+  </table>
 </body>
 </html>

@@ -90,6 +90,19 @@ public class BasicController {
         return "basic/each";
     }
 
+    @GetMapping("/block")
+    public String block(Model model) {
+        generateUsers(model);
+        return "basic/block";
+    }
+
+    @GetMapping("/javascript")
+    public String javascript(Model model){
+        generateUsers(model);
+        model.addAttribute("user", new User("userD", 40));
+        return "basic/javascript";
+    }
+
     private void generateUsers(Model model) {
         User userA = new User("userA", 10);
         User userB = new User("userB", 20);

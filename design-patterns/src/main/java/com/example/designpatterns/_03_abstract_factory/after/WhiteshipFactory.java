@@ -3,8 +3,6 @@ package com.example.designpatterns._03_abstract_factory.after;
 import com.example.designpatterns._02_factorymethod.after.Ship;
 import com.example.designpatterns._02_factorymethod.after.WhiteShip;
 import com.example.designpatterns._03_abstract_factory.before.DefaultShipFactory;
-import com.example.designpatterns._03_abstract_factory.before.WhiteAnchor;
-import com.example.designpatterns._03_abstract_factory.before.WhiteWheel;
 
 // 클라이언트
 public class WhiteshipFactory extends DefaultShipFactory {

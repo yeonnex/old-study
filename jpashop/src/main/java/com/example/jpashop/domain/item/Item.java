@@ -20,6 +20,6 @@ public class Item {
     private Integer price;
     private Integer stockQuantity;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "items")
     private List<Category> categories;
 }

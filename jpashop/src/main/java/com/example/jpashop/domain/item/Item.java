@@ -1,6 +1,7 @@
 package com.example.jpashop.domain.item;
 
 import com.example.jpashop.domain.Category;
+import com.example.jpashop.exception.NotEnoughStockException;
 import lombok.Getter;
 import lombok.Setter;
 

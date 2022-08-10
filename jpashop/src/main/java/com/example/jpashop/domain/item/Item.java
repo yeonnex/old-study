@@ -22,4 +22,18 @@ public class Item {
 
     @ManyToMany(mappedBy = "items")
     private List<Category> categories;
+
+    // 비즈니스
+    // 재고 늘리기
+    public void addStock(Integer quantity) {
+        this.stockQuantity = this.stockQuantity + quantity;
+    }
+    // 재고 줄이기
+    public void removeStock(Integer quantity) {
+        int currentStock = this.stockQuantity - quantity;
+        if (currentStock < 0) {
+            throw new NotEnoughStockException("재고 없음");
+        }
+        this.stockQuantity = this.stockQuantity - quantity;
+    }
 }

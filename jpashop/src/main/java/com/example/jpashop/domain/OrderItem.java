@@ -1,7 +1,9 @@
 package com.example.jpashop.domain;
 
 import com.example.jpashop.domain.item.Item;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,6 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItem {
     @Id @GeneratedValue
     @Column(name = "order_item_id")
@@ -38,6 +41,7 @@ public class OrderItem {
     }
 
     //== 비즈니스 로직 ==//
+    // 재고 수량 원복
     public void cancel() {
         this.item.addStock(count);
     }

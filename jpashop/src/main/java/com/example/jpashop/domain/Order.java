@@ -1,6 +1,8 @@
 package com.example.jpashop.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -12,6 +14,7 @@ import static javax.persistence.FetchType.*;
 @Entity
 @Getter @Setter
 @Table(name = "orders")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
     @Id @GeneratedValue
     @Column(name = "order_id")
@@ -64,6 +67,7 @@ public class Order {
         if (delivery.getStatus() == DeliveryStatus.COMP) {
             throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다");
         }
+        this.status = OrderStatus.CANCELED;
         for (OrderItem orderItem : orderItems) {
             orderItem.cancel();
         }

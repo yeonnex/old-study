@@ -2,8 +2,7 @@ package com.example.jpashop.domain.item;
 
 import com.example.jpashop.domain.Category;
 import com.example.jpashop.exception.NotEnoughStockException;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,6 +11,8 @@ import java.util.List;
 @DiscriminatorColumn(name = "dtype")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@Builder
 public class Item {
     @Id @GeneratedValue
     @Column(name = "item_id")

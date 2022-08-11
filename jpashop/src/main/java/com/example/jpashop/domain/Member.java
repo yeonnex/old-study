@@ -7,9 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter @Setter @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter @Setter
+@Builder @AllArgsConstructor @NoArgsConstructor
 public class Member {
     @Id @GeneratedValue
     @Column(name = "member_id")
@@ -19,6 +18,7 @@ public class Member {
     @Embedded
     private Address address;
 
+    @Builder.Default
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 

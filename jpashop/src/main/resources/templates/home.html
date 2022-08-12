@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: header">
+    <title>Hello</title>
+</head>
+<div class="container">
+<div th:replace="fragments/bodyHeader.html :: bodyHeader"></div>
+    <div class="jumbotron">
+        <h1>HELLO SHOP</h1>
+        <p class="lead">회원기능</p>
+        <p>
+            <a class="btn btn-lg btn-secondary" href="/members/new">회원가입</a>
+            <a class="btn btn-lg btn-secondary" href="/members">회원 목록</a>
+        </p>
+        <p class="lead">상품기능</p>
+        <p>
+            <a class="btn btn-lg btn-secondary"  href="/items/new" >상품등록</a>
+            <a class="btn btn-lg btn-secondary" href="/items">상품조회</a>
+        </p>
+        <p class="lead">주문기능</p>
+        <p>
+            <a class="btn btn-lg btn-secondary" href="/orders/new">주문하기</a>
+            <a class="btn btn-lg btn-secondary" href="/orders">주문조회</a>
+        </p>
+    </div>
+    <footer th:replace="fragments/footer.html :: footer"></footer>
+</div>
+</html>

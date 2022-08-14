@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +35,11 @@ public class MemberService {
     public List<Member> findMembers() {
         return memberRepository.findAll();
     }
+    public List<MemberApiController.MemberResponse> findAllMemberResponse() {
+        return memberRepository.findAll()
+                .stream()
+                .map(m -> modelMapper.map(m, MemberApiController.MemberResponse.class)).collect(Collectors.toList());
+    }
 
     // 회원 단건 조회
 
@@ -50,9 +56,7 @@ public class MemberService {
         }
     }
 
-    @Transactional
     public void update(Long id, MemberApiController.UpdateMemberRequest request) {
-        Member member = memberRepository.findOne(id);
-        modelMapper.map(request, member);
+
     }
 }

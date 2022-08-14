@@ -62,8 +62,4 @@ public class OrderService {
         orderRepository.findOne(orderId);
     }
 
-    // 검색
-/*    public List<Order> findOrders(OrderSearch orderSearch) {
-        orderRepository.findAll(orderSearch);
-    }*/
 }

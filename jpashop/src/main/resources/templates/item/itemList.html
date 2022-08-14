@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/header.html :: header"></head>
+<div class="container">
+  <div th:replace="fragments/bodyHeader.html :: bodyHeader "></div>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <td>#</td>
+      <td>상품명</td>
+      <td>가격</td>
+      <td>수량</td>
+      <td>저자</td>
+      <td>isbn</td>
+    </tr>
+    </thead>
+    <tr th:each="item : ${items}">
+      <td th:text="${item.id}"></td>
+      <td th:text="${item.name}"></td>
+      <td th:text="${item.price}"></td>
+      <td th:text="${item.stockQuantity}"></td>
+      <td th:text="${item.author}"></td>
+      <td th:text="${item.isbn}"></td>
+      <td>
+        <a th:href="@{/items/{id}/edit (id=${item.id})}" class="btn btn-primary" role="button">수정</a>
+      </td>
+    </tr>
+  </table>
+
+  <div th:replace="fragments/footer.html :: footer"></div>
+</div>
+</html>

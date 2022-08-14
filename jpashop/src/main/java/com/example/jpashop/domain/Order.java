@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.FetchType.*;
@@ -24,7 +25,7 @@ public class Order {
     private Member member;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItem> orderItems;
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     private LocalDateTime orderDate;
 
@@ -55,7 +56,9 @@ public class Order {
         Order order = new Order();
         order.setMember(member);
         order.setDelivery(delivery);
-        order.setOrderItems(List.of(orderItems));
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);
+        }
         order.setStatus(OrderStatus.ORDER);
         order.setOrderDate(LocalDateTime.now());
 

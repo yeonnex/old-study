@@ -22,6 +22,12 @@ public class OrderRepository {
         return em.find(Order.class, id);
     }
 
+    public List<Order> findAll(){
+        List<Order> result = em.createQuery("select o from Order o", Order.class).getResultList();
+        System.out.println(result);
+        return result;
+    }
+
     public List<Order> findAllByString(OrderSearch orderSearch) {
 
         String jpql = "select o from Order o join o.member m";

@@ -1,5 +1,6 @@
 package com.example.jpashop.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,7 +9,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 @NoArgsConstructor
-@Getter @Setter
+@Getter @Setter @Builder
 public class Address {
     private String city;
     private String street;

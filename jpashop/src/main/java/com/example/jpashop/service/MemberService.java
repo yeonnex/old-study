@@ -1,8 +1,10 @@
 package com.example.jpashop.service;
 
+import com.example.jpashop.api.MemberApiController;
 import com.example.jpashop.domain.Member;
 import com.example.jpashop.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final ModelMapper modelMapper;
+
     /**
      * 회원 가입
      */
@@ -41,9 +45,14 @@ public class MemberService {
     private void validateDuplicatedMember(Member member) {
         String name = member.getName();
         List<Member> savedMember = memberRepository.findByName(name);
-        if ( ! savedMember.isEmpty()) {
-        throw new IllegalStateException("이미 존재하는 회원입니다");
+        if (!savedMember.isEmpty()) {
+            throw new IllegalStateException("이미 존재하는 회원입니다");
         }
     }
 
+    @Transactional
+    public void update(Long id, MemberApiController.UpdateMemberRequest request) {
+        Member member = memberRepository.findOne(id);
+        modelMapper.map(request, member);
+    }
 }

@@ -4,6 +4,7 @@ import com.example.jpashop.domain.Address;
 import com.example.jpashop.domain.Order;
 import com.example.jpashop.domain.OrderStatus;
 import com.example.jpashop.repository.OrderRepository;
+import com.example.jpashop.repository.SimpleOrderQueryDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -50,6 +51,10 @@ public class OrderSimpleApiController {
         return all.stream()
                 .map(SimpleOrderDto::new)
                 .collect(Collectors.toList());
+    }
+    @GetMapping("/api/v4/simple-orders")
+    public List<SimpleOrderQueryDto> orderV4() {
+        return orderRepository.findOrderDtos();
     }
 
     @Getter

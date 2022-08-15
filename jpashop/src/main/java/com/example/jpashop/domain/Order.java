@@ -27,6 +27,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    @Column(name = "ORDER_DATE")
     private LocalDateTime orderDate;
 
     @Enumerated(EnumType.STRING)

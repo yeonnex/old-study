@@ -14,6 +14,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "ORDER_ITEM")
 public class OrderItem {
     @Id @GeneratedValue
     @Column(name = "order_item_id")
@@ -28,6 +29,7 @@ public class OrderItem {
     @JoinColumn(name = "order_id")
     private Order order;
 
+    @Column(name = "ORDER_PRICE")
     private Integer orderPrice;
     private Integer count;
 

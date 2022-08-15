@@ -20,6 +20,7 @@ public class Item {
 
     private String name;
     private Integer price;
+    @Column(name = "STOCK_QUANTITY")
     private Integer stockQuantity;
 
     @ManyToMany(mappedBy = "items")

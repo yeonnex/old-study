@@ -28,7 +28,7 @@ public class OrderSimpleApiController {
     private final ModelMapper modelMapper;
 
     @GetMapping("/api/v1/simple-orders")
-    public List<Order> orders() {
+    public List<Order> ordersV1() {
         List<Order> all = orderRepository.findAll();
         for (Order order : all) {
             order.getMember().getName(); // LAZY 강제 초기화
@@ -37,8 +37,16 @@ public class OrderSimpleApiController {
     }
 
     @GetMapping("/api/v2/simple-orders")
-    public List<SimpleOrderDto> simpleOrderDto() {
+    public List<SimpleOrderDto> ordersV2() {
         List<Order> all = orderRepository.findAll();
+        return all.stream()
+                .map(SimpleOrderDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/api/v3/simple-orders")
+    public List<SimpleOrderDto> ordersV3() {
+        List<Order> all = orderRepository.findAllWithMemberDelivery();
         return all.stream()
                 .map(SimpleOrderDto::new)
                 .collect(Collectors.toList());

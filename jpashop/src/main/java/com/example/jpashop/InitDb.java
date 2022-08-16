@@ -72,7 +72,7 @@ public class InitDb {
         }
 
         private Item createBook(String name, Integer price, Integer stockQuantity) {
-            Item book = Book.builder().name("JPA1").price(1000).stockQuantity(100).build();
+            Item book = Book.builder().name(name).price(price).stockQuantity(stockQuantity).build();
             em.persist(book);
             return book;
         }

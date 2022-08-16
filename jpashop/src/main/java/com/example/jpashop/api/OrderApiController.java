@@ -4,7 +4,9 @@ import com.example.jpashop.api.dto.DeliveryDto;
 import com.example.jpashop.api.dto.ItemDto;
 import com.example.jpashop.api.dto.MemberDto;
 import com.example.jpashop.api.dto.OrderItemDto;
+import com.example.jpashop.domain.Address;
 import com.example.jpashop.domain.Order;
+import com.example.jpashop.domain.OrderItem;
 import com.example.jpashop.domain.OrderStatus;
 import com.example.jpashop.repository.OrderRepository;
 import lombok.Getter;
@@ -54,22 +56,33 @@ public class OrderApiController {
 
     @Getter @Setter
     static class OrderDto {
-        public OrderDto(Order order) {
-            this.memberDto = modelMapper.map(order.getMember(), MemberDto.class);
-            order.getOrderItems().forEach(o -> {
-                this.orderItemDtos.add(modelMapper.map(o, OrderItemDto.class));
-                this.itemDto = modelMapper.map(o.getItem(), ItemDto.class);
-            });
-            this.orderDate = order.getOrderDate();
-            this.orderStatus = order.getStatus();
-            this.deliveryDto = modelMapper.map(order.getDelivery(), DeliveryDto.class);
-        }
-
-        private MemberDto memberDto;
-        private List<OrderItemDto> orderItemDtos = new ArrayList<>();
-        private ItemDto itemDto;
+        private Long orderId;
+        private String name;
         private LocalDateTime orderDate;
         private OrderStatus orderStatus;
-        private DeliveryDto deliveryDto;
+        private Address address;
+        private List<OrderItemDto> orderItems;
+        public OrderDto(Order order) {
+            orderId = order.getId();
+            name = order.getMember().getName();
+            orderDate = order.getOrderDate();
+            orderStatus = order.getStatus();
+            address = order.getDelivery().getAddress();
+            order.getOrderItems().stream().forEach(o -> o.getItem().getName());
+            orderItems = order.getOrderItems().stream()
+                    .map(orderItem -> new OrderItemDto(orderItem)).collect(Collectors.toList());
+        }
+        @Getter @Setter
+        static class OrderItemDto {
+            private String itemName;
+            private int orderPrice;
+            private int count;
+
+            public OrderItemDto(OrderItem orderItem) {
+                this.itemName = orderItem.getItem().getName();
+                this.orderPrice = orderItem.getItem().getPrice();
+                this.count = orderItem.getCount();
+            }
+        }
     }
 }

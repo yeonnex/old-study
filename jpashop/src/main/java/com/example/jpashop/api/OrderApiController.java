@@ -53,6 +53,20 @@ public class OrderApiController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * V3 엔티티를 DTO 로 변환 - 페치조인 최적화
+     */
+    @GetMapping("/api/v3/orders")
+    public List<OrderDto> ordersV3() {
+        List<Order> all = orderRepository.findAllWithItem();
+        for (Order order : all) {
+            System.out.println(order);
+            System.out.println(order.getId());
+        }
+        return all.stream().map(OrderDto :: new)
+                .collect(Collectors.toList());
+    }
+
 
     @Getter @Setter
     static class OrderDto {

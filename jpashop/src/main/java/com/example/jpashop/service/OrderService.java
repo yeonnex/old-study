@@ -6,7 +6,7 @@ import com.example.jpashop.domain.Order;
 import com.example.jpashop.domain.OrderItem;
 import com.example.jpashop.domain.item.Item;
 import com.example.jpashop.repository.ItemRepository;
-import com.example.jpashop.repository.MemberRepository;
+import com.example.jpashop.repository.MemberRepositoryOld;
 import com.example.jpashop.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final MemberRepository memberRepository;
+    private final MemberRepositoryOld memberRepository;
     private final ItemRepository itemRepository;
 
     /**

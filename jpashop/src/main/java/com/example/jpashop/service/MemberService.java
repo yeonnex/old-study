@@ -2,7 +2,7 @@ package com.example.jpashop.service;
 
 import com.example.jpashop.api.MemberApiController;
 import com.example.jpashop.domain.Member;
-import com.example.jpashop.repository.MemberRepository;
+import com.example.jpashop.repository.MemberRepositoryOld;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberService {
-    private final MemberRepository memberRepository;
+    private final MemberRepositoryOld memberRepository;
     private final ModelMapper modelMapper;
 
     /**

@@ -9,6 +9,8 @@ import com.example.jpashop.domain.Order;
 import com.example.jpashop.domain.OrderItem;
 import com.example.jpashop.domain.OrderStatus;
 import com.example.jpashop.repository.OrderRepository;
+import com.example.jpashop.repository.order.query.OrderQueryDto;
+import com.example.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderApiController {
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
     private static final ModelMapper modelMapper = new ModelMapper();
 
     /**
@@ -82,6 +85,13 @@ public class OrderApiController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * V4 DTO
+     */
+//    @GetMapping("/api/v4/orders")
+//    public List<OrderQueryDto> ordersV4(){
+//        orderQueryRepository();
+//    }
 
 
     @Getter @Setter

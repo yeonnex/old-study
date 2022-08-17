@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -59,6 +60,7 @@ public class OrderApiController {
     @GetMapping("/api/v3/orders")
     public List<OrderDto> ordersV3() {
         List<Order> all = orderRepository.findAllWithItem();
+
         for (Order order : all) {
             System.out.println(order);
             System.out.println(order.getId());
@@ -66,6 +68,20 @@ public class OrderApiController {
         return all.stream().map(OrderDto :: new)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * V3.1 엔티티를 DTO 로 변환 - 페이징
+     */
+    @GetMapping("/api/v3.1/orders")
+    public List<OrderDto> ordersV3_page(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "100") int limit){
+        List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
+        return orders.stream()
+                .map(o -> new OrderDto(o))
+                .collect(Collectors.toList());
+    }
+
 
 
     @Getter @Setter

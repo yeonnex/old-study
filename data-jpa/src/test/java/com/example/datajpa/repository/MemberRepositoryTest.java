@@ -40,4 +40,13 @@ class MemberRepositoryTest {
         assertEquals(ming.get(0).getAge(), 24);
     }
 
+    @Test
+    void findUserAnnoQuery() {
+        Member member = new Member("ming", 24);
+        memberRepository.save(member);
+        List<Member> ming = memberRepository.findUser("ming", 24);
+
+        assertEquals(ming.get(0).getAge(), 24);
+    }
+
 }

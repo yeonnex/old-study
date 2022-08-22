@@ -19,7 +19,7 @@ public class OrderRepositoryV3 {
             if ("ex".equals(itemId)) {
                 throw new IllegalStateException("예외 발생");
             }
-            //sleep();
+            sleep();
             trace.end(status);
         } catch (Exception e) {
             trace.exception(status, e);

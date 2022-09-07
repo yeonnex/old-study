@@ -1,59 +1,31 @@
-/*
 package com.example.demo.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.SecurityUser;
+import com.example.demo.domain.User;
+import com.example.demo.service.InMemoryUserDetailsService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.List;
 
 @Configuration
-public class ProjectConfig extends WebSecurityConfigurerAdapter {
+public class ProjectConfig {
 
-    @Autowired
-    private CustomAuthenticationProvider authenticationProvider;
-    */
-/*@Bean
-    public UserDetailsService userDetailsService() {
-        var userDetailsService = new InMemoryUserDetailsManager();
-        var user = User.withUsername("john")
-                .password("12345")
-                .authorities("read")
-                .build();
-        userDetailsService.createUser(user);
-        return userDetailsService;
+    @Bean
+    public UserDetailsService userDetailsService(){
+        User user = User.builder().username("john").password("12345").authority("READ").build();
+        UserDetails u = new SecurityUser(user);
+        List<UserDetails> users = List.of(u);
+        return new InMemoryUserDetailsService(users);
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
-    }*//*
-
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic();
-        http.authorizeRequests()
-                .anyRequest().permitAll(); // 모든 요청에 인증이 필요
     }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        */
-/*var userDetailsService = new InMemoryUserDetailsManager();
-        var user = User.withUsername("john")
-                .password("12345")
-                .authorities("read")
-                .build();
-        userDetailsService.createUser(user);
-        auth.userDetailsService(userDetailsService)
-                .passwordEncoder(NoOpPasswordEncoder.getInstance());*//*
-
-        auth.authenticationProvider(authenticationProvider);
-
-
-    }
-
-
 }
-*/

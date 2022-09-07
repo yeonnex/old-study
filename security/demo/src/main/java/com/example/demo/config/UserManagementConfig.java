@@ -13,19 +13,19 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
  */
 @Configuration
 public class UserManagementConfig {
-    @Bean
-    public UserDetailsService userDetailsService(){
-        var userDetailsService = new InMemoryUserDetailsManager();
+//    @Bean
+//    public UserDetailsService userDetailsService(){
+//        var userDetailsService = new InMemoryUserDetailsManager();
+//
+//        var user = User.withUsername("john")
+//                .password("12345")
+//                .authorities("read").build();
+//        userDetailsService.createUser(user);
+//        return userDetailsService;
+//    }
 
-        var user = User.withUsername("john")
-                .password("12345")
-                .authorities("read").build();
-        userDetailsService.createUser(user);
-        return userDetailsService;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return NoOpPasswordEncoder.getInstance();
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder(){
+//        return NoOpPasswordEncoder.getInstance();
+//    }
 }

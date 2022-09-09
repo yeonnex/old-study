@@ -2,6 +2,7 @@ package com.example.demorestapi.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,6 +30,7 @@ public class EventControllerTest {
     ObjectMapper objectMapper;
 
     @Test
+    @DisplayName("정상적으로 이벤트를 생성")
     void createEvent() throws Exception {
 
         EventDto eventDto = EventDto.builder()
@@ -37,7 +39,7 @@ public class EventControllerTest {
                 .beginEnrollmentDateTime(LocalDateTime.of(2022, 4, 6, 5, 4, 3))
                 .closeEnrollmentDateTime(LocalDateTime.of(2022, 5, 3, 3, 3, 3, 3))
                 .beginEventDateTime(LocalDateTime.of(2022, 6, 7, 1, 1, 1, 1))
-                .closeEnrollmentDateTime(LocalDateTime.of(2023, 4, 4, 4, 4, 4))
+                .endEventDateTime(LocalDateTime.of(2023, 4, 4, 4, 4, 4))
                 .location("강남역")
                 .basePrice(100)
                 .maxPrice(200)
@@ -60,6 +62,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @DisplayName("입력받을 수 없는 값을 사용한 경우 에러가 발생하는 테스트")
     void createEvent_Bad_Request() throws Exception {
 
         Event event = Event.builder()
@@ -87,12 +90,37 @@ public class EventControllerTest {
     }
 
     @Test
+    @DisplayName("입력값이 비어있는 경우 에러가 발생하는 테스트")
     void createEvent_Bad_Request_Empty_Input() throws Exception {
-        EventDto eventDto = EventDto.builder().build();
+        EventDto eventDto = EventDto.builder()
+                .build();
         mockMvc.perform(post("/api/events")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(eventDto))
         )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("입력값이 비즈니스 로직상 잘못된 경우 에러가 발생하는 테스트")
+    void createEvent_Bad_Request_Wrong_Input() throws Exception {
+        EventDto eventDto = EventDto.builder()
+                .name("Spring")
+                .description("REST API with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2023, 4, 6, 5, 4, 3))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022, 5, 3, 3, 3, 3, 3))
+                .beginEventDateTime(LocalDateTime.of(2023, 6, 7, 1, 1, 1, 1))
+                .endEventDateTime(LocalDateTime.of(2020, 4, 4, 4, 4, 4))
+                .location("강남역")
+                .basePrice(200)
+                .maxPrice(100)
+                .limitOfEnrollment(30)
+                .build();
+
+        mockMvc.perform(post("/api/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDto))
+                )
                 .andExpect(status().isBadRequest());
     }
 }

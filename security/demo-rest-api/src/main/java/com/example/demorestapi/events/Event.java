@@ -2,13 +2,16 @@ package com.example.demorestapi.events;
 
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Builder
 @AllArgsConstructor @NoArgsConstructor
 @Getter @Setter @EqualsAndHashCode(of = "id")
+@Entity
 public class Event {
 
+    @Id @GeneratedValue
     private Integer id;
 
     private String name;
@@ -26,5 +29,6 @@ public class Event {
     private boolean free;
 
     @Builder.Default
+    @Enumerated(EnumType.STRING)
     private EventStatus eventStatus = EventStatus.DRAFT;
 }

@@ -1,6 +1,7 @@
 package com.example.demorestapi.events;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,13 +20,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class EventController {
 
     private final EventRepository eventRepository;
+    private final ModelMapper modelMapper;
 
     @PostMapping
-    public ResponseEntity createEvent(@RequestBody Event event){
+    public ResponseEntity<Event> createEvent(@RequestBody EventDto eventDto){
         URI uri = linkTo(EventController.class)
                 .slash("{id}").toUri();
-        event.setId(10);
-        eventRepository.save(event);
-        return ResponseEntity.created(uri).body(event);
+        Event event = modelMapper.map(eventDto, Event.class);
+        Event newEvent = eventRepository.save(event);
+        return ResponseEntity.created(uri).body(newEvent);
     }
 }

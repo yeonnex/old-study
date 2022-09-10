@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.beans.EventSetDescriptor;
 import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -153,4 +154,28 @@ public class EventControllerTest {
                 .andExpect(jsonPath("$[0].rejectedValue").exists())
         ;
     }
+
+    @Test
+    @DisplayName("basePrice 와 maxPrice 에 따라 free 여부 달라지는 비즈니스 로직 테스트")
+    void testFree() throws Exception {
+        EventDto eventDto = EventDto.builder()
+                .name("Spring")
+                .description("REST API with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2021, 4, 6, 5, 4, 3))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022, 5, 3, 3, 3, 3, 3))
+                .beginEventDateTime(LocalDateTime.of(2022, 6, 7, 1, 1, 1, 1))
+                .endEventDateTime(LocalDateTime.of(2023, 4, 4, 4, 4, 4))
+                .location("강남역")
+                .basePrice(0)
+                .maxPrice(0)
+                .limitOfEnrollment(30)
+                .build();
+        mockMvc.perform(post("/api/events")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(eventDto))
+        ).andExpect(jsonPath("free").value(Matchers.is(true)));
+    }
+
+
 }

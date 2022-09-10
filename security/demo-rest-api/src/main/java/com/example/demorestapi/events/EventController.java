@@ -1,5 +1,7 @@
 package com.example.demorestapi.events;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.MediaTypes;
@@ -22,18 +24,21 @@ public class EventController {
 
     private final EventRepository eventRepository;
     private final ModelMapper modelMapper;
+    private final ObjectMapper objectMapper;
     private final EventValidator eventValidator;
 
     @PostMapping
-    public ResponseEntity<Event> createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
+    public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) throws JsonProcessingException {
         // 먼저 입력값 자체 검증
         if (errors.hasErrors()){
             return ResponseEntity.badRequest().build();
         }
         // 비즈니스 로직 검증
         eventValidator.validate(eventDto, errors);
+
         if (errors.hasErrors()){
-            return ResponseEntity.badRequest().build();
+            String result = objectMapper.writeValueAsString(errors);
+            return ResponseEntity.badRequest().body(result);
         }
 
         URI uri = linkTo(EventController.class)

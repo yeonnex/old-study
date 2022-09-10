@@ -1,5 +1,6 @@
 package com.example.demorestapi.events;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -122,5 +123,34 @@ public class EventControllerTest {
                         .content(objectMapper.writeValueAsString(eventDto))
                 )
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("입력값이 이상한 경우 Bad Request 로 응답")
+    void createEvent_Bad_Request_Response() throws Exception {
+        EventDto eventDto = EventDto.builder()
+                .name("Spring")
+                .description("REST API with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2023, 4, 6, 5, 4, 3))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022, 5, 3, 3, 3, 3, 3))
+                .beginEventDateTime(LocalDateTime.of(2023, 6, 7, 1, 1, 1, 1))
+                .endEventDateTime(LocalDateTime.of(2020, 4, 4, 4, 4, 4))
+                .location("강남역")
+                .basePrice(200)
+                .maxPrice(100)
+                .limitOfEnrollment(30)
+                .build();
+
+        mockMvc.perform(post("/api/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDto))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].objectName").exists())
+                .andExpect(jsonPath("$[0].field").exists())
+                .andExpect(jsonPath("$[0].defaultMessage").exists())
+                .andExpect(jsonPath("$[0].code").exists())
+                .andExpect(jsonPath("$[0].rejectedValue").exists())
+        ;
     }
 }

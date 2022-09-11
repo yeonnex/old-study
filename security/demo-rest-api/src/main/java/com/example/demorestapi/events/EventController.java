@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponents;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -40,12 +42,18 @@ public class EventController {
             String result = objectMapper.writeValueAsString(errors);
             return ResponseEntity.badRequest().body(result);
         }
-
-        URI uri = linkTo(EventController.class)
-                .slash("{id}").toUri();
         Event event = modelMapper.map(eventDto, Event.class);
         event.update();
+
         Event newEvent = eventRepository.save(event);
-        return ResponseEntity.created(uri).body(newEvent);
+
+        WebMvcLinkBuilder selfLinkBuilder = linkTo(EventController.class)
+                .slash(newEvent.getId());
+        URI createdUri = selfLinkBuilder.toUri();
+        EventResource eventResource = new EventResource(newEvent);
+        eventResource.add(selfLinkBuilder.withRel("update-event"));
+        eventResource.add(linkTo(EventController.class).withRel("query-events"));
+
+        return ResponseEntity.created(createdUri).body(eventResource);
     }
 }

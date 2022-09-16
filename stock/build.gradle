@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.3'
+    id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+def springDependencies = [
+        "data-jpa",
+        "web",
+        "test"
+]
+
+dependencies {
+    springDependencies.forEach {
+        implementation "org.springframework.boot:spring-boot-starter-$it"
+    }
+
+    runtimeOnly 'mysql:mysql-connector-java'
+
+
+}
+
+test {
+    useJUnitPlatform()
+}

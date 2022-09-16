@@ -1,3 +1,5 @@
+import java.util.concurrent.Callable
+
 plugins {
     id 'org.springframework.boot' version '2.7.3'
     id 'io.spring.dependency-management' version '1.0.13.RELEASE'
@@ -10,6 +12,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
+    asciidoctorExt
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -17,10 +20,6 @@ configurations {
 
 repositories {
     mavenCentral()
-}
-
-asciidoctor {
-    sourceDir 'src/doc/asciidoc'
 }
 
 dependencies {
@@ -31,15 +30,18 @@ dependencies {
     implementation 'org.modelmapper:modelmapper:3.1.0'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'com.h2database:h2'
+    implementation 'mysql:mysql-connector-java'
+
     compileOnly 'org.projectlombok:lombok'
-    compileOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-    testImplementation group: 'pl.pragmatists', name: 'JUnitParams', version: '1.1.1'
-}
+    testImplementation 'pl.pragmatists:JUnitParams:1.1.1'
 
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+}
 
 ext {
     snippetsDir = file('build/generated-snippets')
@@ -50,22 +52,15 @@ test {
     useJUnitPlatform()
 }
 
-asciidoctor {
+asciidoctor { value ->
     inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
     dependsOn test
 }
 
 bootJar {
     dependsOn asciidoctor
-    copy {
-        from "${asciidoctor.outputDir}"
-        into 'BOOT-INF/classes/static/docs'
+    from("${asciidoctor.outputDir}") {
+        into 'static/docs'
     }
-    finalizedBy 'copyDocument'
-}
-
-task copyDocument(type: Copy) {
-    dependsOn bootJar
-    from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
 }

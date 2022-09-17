@@ -33,14 +33,15 @@ public class EventController {
     public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) throws JsonProcessingException {
         // 먼저 입력값 자체 검증
         if (errors.hasErrors()){
-            return ResponseEntity.badRequest().build();
+            ErrorResource errorResource = new ErrorResource(errors);
+            return ResponseEntity.badRequest().body(errors);
         }
         // 비즈니스 로직 검증
         eventValidator.validate(eventDto, errors);
 
         if (errors.hasErrors()){
-            String result = objectMapper.writeValueAsString(errors);
-            return ResponseEntity.badRequest().body(result);
+            ErrorResource errorResource = new ErrorResource(errors);
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
         }
         Event event = modelMapper.map(eventDto, Event.class);
         event.update();

@@ -3,12 +3,9 @@ package com.example.demorestapi.events;
 import com.example.demorestapi.common.RestDocsConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,17 +14,19 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.stream.IntStream;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -44,6 +43,9 @@ public class EventControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    EventRepository eventRepository;
 
     @Test
     @DisplayName("정상적으로 이벤트를 생성")
@@ -95,7 +97,7 @@ public class EventControllerTest {
                                 fieldWithPath("basePrice").description("base 가격"),
                                 fieldWithPath("maxPrice").description("max 가격"),
                                 fieldWithPath("limitOfEnrollment").description("이벤트 인원 제한 수")
-                        ),  responseHeaders( // 응답헤더 문서화
+                        ), responseHeaders( // 응답헤더 문서화
                                 headerWithName(HttpHeaders.LOCATION).description("응답 헤더"),
                                 headerWithName(HttpHeaders.CONTENT_TYPE).description("컨텐츠 타입")
                         ), relaxedResponseFields( // 응답필드 문서화
@@ -232,6 +234,41 @@ public class EventControllerTest {
                 .accept(MediaTypes.HAL_JSON)
                 .content(objectMapper.writeValueAsString(eventDto))
         ).andExpect(jsonPath("free").value(Matchers.is(true)));
+    }
+
+    @Test
+    @DisplayName("30개의 이벤트를 10개씩 조회 - 두번째 페이지 조회하기")
+    void 이벤트_페이징_조회() throws Exception {
+        // Given
+        generateEvents(30);
+        // When
+        mockMvc.perform(get("/api/events")
+                        .param("page", "1")
+                        .param("sort", "name,DESC")
+                        .param("size", "10")) // 두번쨰 페이지 조회
+                .andDo(print())
+        // Then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("pageable").exists())
+                .andExpect(jsonPath("pageable.pageNumber").value(1))
+                .andExpect(jsonPath("pageable.pageSize").value(10))
+                .andDo(document("query-events",
+                        requestParameters(
+                                parameterWithName("page").description("찾아올 페이지"),
+                                            parameterWithName("sort").description("페이지 정렬 기준. 정렬할 필드명과 정렬 순서를 ',' 로 구분하여 요청"),
+                                            parameterWithName("size").description("페이지당 아이템 개수")
+                        )))
+        ;
+
+
+    }
+
+    private void generateEvents(int num) {
+        IntStream.range(0, num).forEach(i -> {
+            Event event = new Event();
+            event.setName("spring study " + i);
+            eventRepository.save(event);
+        });
     }
 
 

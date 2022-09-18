@@ -4,15 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponents;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -32,14 +30,14 @@ public class EventController {
     @PostMapping
     public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) throws JsonProcessingException {
         // 먼저 입력값 자체 검증
-        if (errors.hasErrors()){
+        if (errors.hasErrors()) {
             ErrorResource errorResource = new ErrorResource(errors);
             return ResponseEntity.badRequest().body(errors);
         }
         // 비즈니스 로직 검증
         eventValidator.validate(eventDto, errors);
 
-        if (errors.hasErrors()){
+        if (errors.hasErrors()) {
             ErrorResource errorResource = new ErrorResource(errors);
             return ResponseEntity.badRequest().body(errors.getAllErrors());
         }
@@ -56,5 +54,10 @@ public class EventController {
         eventResource.add(linkTo(EventController.class).withRel("query-events"));
 
         return ResponseEntity.created(createdUri).body(eventResource);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<Event>> queryEvents(Pageable pageable) {
+        return ResponseEntity.ok(eventRepository.findAll(pageable));
     }
 }

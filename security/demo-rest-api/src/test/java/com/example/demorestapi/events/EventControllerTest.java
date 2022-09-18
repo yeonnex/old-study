@@ -11,19 +11,23 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Description;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.event.EventListenerMethodProcessor;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
@@ -285,12 +289,45 @@ public class EventControllerTest {
         ;
     }
 
+    @Test
+    @DisplayName("이벤트를 수정한다")
+    void 이벤트_수정() throws Exception {
+        Event event = generateOneEvent("Spring study");
+        String eventName = "Advanced Spring study";
+        EventDto eventDto = EventDto.builder()
+                .name(eventName)
+                .description("REST API with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2022, 4, 6, 5, 4, 3))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022, 5, 3, 3, 3, 3, 3))
+                .beginEventDateTime(LocalDateTime.of(2022, 6, 7, 1, 1, 1, 1))
+                .endEventDateTime(LocalDateTime.of(2023, 4, 4, 4, 4, 4))
+                .location("강남역")
+                .basePrice(100)
+                .maxPrice(200)
+                .limitOfEnrollment(30)
+                .build();
+
+        mockMvc.perform(put("/api/events/{id}", event.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDto))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("name").value(eventName))
+                .andDo(document("update-event"))
+                ;
+    }
+
     private void generateEvents(int num) {
         IntStream.range(0, num).forEach(i -> {
             Event event = new Event();
             event.setName("spring study " + i);
             eventRepository.save(event);
         });
+    }
+
+    private Event generateOneEvent(String name) {
+        Event event = Event.builder().name(name).build();
+        return eventRepository.save(event);
     }
 
 

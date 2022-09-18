@@ -34,7 +34,7 @@ public class EventController {
         // 먼저 입력값 자체 검증
         if (errors.hasErrors()) {
             ErrorResource errorResource = new ErrorResource(errors);
-            return ResponseEntity.badRequest().body(errors);
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
         }
         // 비즈니스 로직 검증
         eventValidator.validate(eventDto, errors);
@@ -79,6 +79,31 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 이벤트를 찾을 수 없습니다.");
         }
         return ResponseEntity.ok(event);
+    }
+
+    /**
+     * 이벤트 수정
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity updateEvent(@PathVariable Integer id,
+                                      @RequestBody @Valid EventDto eventDto,
+                                      Errors errors) {
+        Optional<Event> optionalEvent = eventRepository.findById(id);
+        if (optionalEvent.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
+        }
+
+        this.eventValidator.validate(eventDto, errors);
+
+        Event existingEvent = optionalEvent.get();
+        modelMapper.map(eventDto, existingEvent);
+        Event updated = eventRepository.save(existingEvent);
+
+        return ResponseEntity.ok(updated);
     }
 
 

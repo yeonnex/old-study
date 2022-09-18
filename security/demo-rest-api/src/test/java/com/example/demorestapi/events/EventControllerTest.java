@@ -1,5 +1,6 @@
 package com.example.demorestapi.events;
 
+import com.example.demorestapi.common.BaseControllerTest;
 import com.example.demorestapi.common.RestDocsConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
@@ -11,16 +12,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Description;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.event.EventListenerMethodProcessor;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
@@ -36,18 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@SpringBootTest
-@ActiveProfiles("test")
-@Import(RestDocsConfiguration.class)
-public class EventControllerTest {
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
+public class EventControllerTest extends BaseControllerTest {
 
     @Autowired
     EventRepository eventRepository;
@@ -252,7 +239,7 @@ public class EventControllerTest {
                         .param("sort", "name,DESC")
                         .param("size", "10")) // 두번쨰 페이지 조회
                 .andDo(print())
-        // Then
+                // Then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("pageable").exists())
                 .andExpect(jsonPath("pageable.pageNumber").value(1))
@@ -260,8 +247,8 @@ public class EventControllerTest {
                 .andDo(document("query-events",
                         requestParameters(
                                 parameterWithName("page").description("찾아올 페이지"),
-                                            parameterWithName("sort").description("페이지 정렬 기준. 정렬할 필드명과 정렬 순서를 ',' 로 구분하여 요청"),
-                                            parameterWithName("size").description("페이지당 아이템 개수")
+                                parameterWithName("sort").description("페이지 정렬 기준. 정렬할 필드명과 정렬 순서를 ',' 로 구분하여 요청"),
+                                parameterWithName("size").description("페이지당 아이템 개수")
                         )))
         ;
     }
@@ -276,7 +263,7 @@ public class EventControllerTest {
                 .andExpect(jsonPath("id").exists())
                 .andExpect(jsonPath("name").exists())
                 .andDo(document("get-an-event"))
-                ;
+        ;
     }
 
     @Test
@@ -314,7 +301,7 @@ public class EventControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value(eventName))
                 .andDo(document("update-event"))
-                ;
+        ;
     }
 
     private void generateEvents(int num) {

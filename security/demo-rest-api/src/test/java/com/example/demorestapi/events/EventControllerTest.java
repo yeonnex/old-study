@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Description;
 import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
@@ -259,8 +260,29 @@ public class EventControllerTest {
                                             parameterWithName("size").description("페이지당 아이템 개수")
                         )))
         ;
+    }
 
+    @Test
+    @DisplayName("이벤트를 단건 조회한다")
+    void 이벤트_단건조회() throws Exception {
+        generateEvents(3);
+        mockMvc.perform(get("/api/events/1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("name").exists())
+                .andDo(document("get-an-event"))
+                ;
+    }
 
+    @Test
+    @Description("없는 이벤트를 조회했을 때 404 응답받기")
+    void 없는이벤트_단건조회_404() throws Exception {
+        generateEvents(3);
+        mockMvc.perform(get("/api/events/100000"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+        ;
     }
 
     private void generateEvents(int num) {

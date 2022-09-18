@@ -8,12 +8,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
@@ -56,8 +58,28 @@ public class EventController {
         return ResponseEntity.created(createdUri).body(eventResource);
     }
 
+    /**
+     * 이벤트 페이징 조회
+     * @param pageable
+     * @return
+     */
+
     @GetMapping
     public ResponseEntity<Page<Event>> queryEvents(Pageable pageable) {
         return ResponseEntity.ok(eventRepository.findAll(pageable));
     }
+
+    /**
+     * 이벤트 단건 조회
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity getEvent(@PathVariable Integer id) {
+        Optional<Event> event = eventRepository.findById(id);
+        if (event.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 이벤트를 찾을 수 없습니다.");
+        }
+        return ResponseEntity.ok(event);
+    }
+
+
 }

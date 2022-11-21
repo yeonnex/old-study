@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import static com.example.querydslexample.QMember.member;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.map;
 
 @SpringBootTest
 @Transactional
@@ -48,11 +50,11 @@ public class QuerydslBasicTest {
     @Test
     void startQueryDsl() {
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
-        QMember m = new QMember("m");
+
         Member findMember = queryFactory
-                .select(m)
-                .from(m)
-                .where(m.memberName.eq("member1"))
+                .select(member) // static import
+                .from(member)
+                .where(member.memberName.eq("member1"))
                 .fetchOne();
 
         assertThat(findMember.getMemberName()).isEqualTo("member1");

@@ -9,6 +9,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +46,8 @@ public class QuerydslBasicTest {
 
         Member member1 = new Member("member1", 10, teamA);
         Member member2 = new Member("member2", 20, teamB);
-        Member member3 = new Member("member3", 10);
-        Member member4 = new Member("member4", 100);
+        Member member3 = new Member("member3", 30);
+        Member member4 = new Member("member4", 40);
 
         em.persist(member1);
         em.persist(member2);
@@ -378,6 +379,43 @@ public class QuerydslBasicTest {
         List<Member> result = searchMember2(usernameParam, ageParam);
         assertThat(result.size()).isEqualTo(1);
     }
+
+    /**
+     * 모든 벌크 연산은 영속성 컨텍스트를 무시하고 DB 에 직빵으로 쿼리를 날린다.
+     * 그렇기에 영속성 컨텍스트의 데이터와 DB 의 값이 다를 수 있다.
+     *
+     * 이 상태에서 select 해서 데이터를 가져오면, 영속성 컨텍스트의 데이터가 불러와지게되는데,
+     * 이는 실제 업데이트된 값이 아님...
+     *
+     * 그래서 벌크성 연산 이후에는 em.flush() 와 em.clear() 같이 영속성컨텍스트를 초기화해주는 것이 마음편함.
+     */
+    @Test
+    void bulkUpdate() {
+        long count = queryFactory
+                .update(member)
+                .set(member.memberName, "비회원")
+                .where(member.age.gt(20)).execute();
+        em.flush();
+        em.clear();
+        assertThat(count).isEqualTo(3);
+
+    }
+
+    @Test
+    void bulkAdd() {
+        long count = queryFactory
+                .update(member)
+                .set(member.age, member.age.add(1))
+                .execute();
+
+        em.flush();
+        em.clear();
+
+        List<Member> result = queryFactory.selectFrom(member).fetch();
+        assertThat(result.get(0).getAge()).isEqualTo(11);
+    }
+
+    // ===== private method =====
 
     private List<Member> searchMember2(String usernameCond, Integer ageCond) {
         return queryFactory

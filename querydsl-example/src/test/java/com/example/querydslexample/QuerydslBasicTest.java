@@ -10,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import java.util.List;
 
 import static com.example.querydslexample.QMember.member;
@@ -35,9 +37,14 @@ public class QuerydslBasicTest {
 
         Member member1 = new Member("member1", 10, teamA);
         Member member2 = new Member("member2", 20, teamB);
+        Member member3 = new Member("member3", 10);
+        Member member4 = new Member("member4", 20);
 
         em.persist(member1);
         em.persist(member2);
+        em.persist(member3);
+        em.persist(member4);
+
 
         // 초기화
         em.flush();
@@ -171,6 +178,69 @@ public class QuerydslBasicTest {
         assertThat(teamB.get(member.age.avg())).isEqualTo(20);
         assertThat(teamB.get(team.teamName)).isEqualTo("teamB");
     }
+
+    @Test
+    void theta_join() {
+        em.persist(new Member("teamA"));
+        em.persist(new Member("teamB"));
+
+        em.flush();
+        em.clear();
+
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .from(member, team)
+                .where(member.memberName.eq(team.teamName))
+                .fetch();
+
+        assertThat(result)
+                .extracting("memberName")
+                .containsExactly("teamA", "teamB");
+    }
+
+    /**
+     * 예) 회원과 팀을 조인하면서, 팀 이름이 teamA 인 팀만 조인, 회원은 모두 조회
+     * JPQL: select m, t from Member m left join m.team t on t.name = 'teamA'
+     */
+    @Test
+    void join_on_filtering() {
+        List<Tuple> result = queryFactory
+                .select(member, team)
+                .from(member)
+                .leftJoin(member.team, team)
+                .on(team.teamName.eq("teamA"))
+                .fetch();
+
+        result.forEach(System.out::println);
+
+    }
+    @PersistenceUnit
+    EntityManagerFactory emf;
+    @Test
+    void fetchJoinNo() {
+        Member result = queryFactory
+                .selectFrom(member)
+                .where(member.memberName.eq("member1"))
+                .fetchOne();
+
+        boolean loaded = emf.getPersistenceUnitUtil().isLoaded(result.getTeam());
+        assertThat(loaded).as("페치 조인 미적용").isFalse();
+
+    }
+
+    @Test
+    void fetchJoinYes() {
+        Member result = queryFactory
+                .selectFrom(member)
+                .join(member.team, team).fetchJoin() // 페치 조인
+                .where(member.memberName.eq("member1"))
+                .fetchOne();
+
+        boolean loaded = emf.getPersistenceUnitUtil().isLoaded(result.getTeam());
+        assertThat(loaded).isTrue();
+    }
+
+    @
 
 
 }

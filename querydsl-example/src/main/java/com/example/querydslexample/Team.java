@@ -15,6 +15,7 @@ import java.util.List;
 @Entity
 @Getter @Setter
 @NoArgsConstructor
+@ToString
 public class Team {
     @Id @GeneratedValue
     private Long id;

@@ -2,6 +2,7 @@ package com.example.querydslexample;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ public class QuerydslBasicTest {
         Member member1 = new Member("member1", 10, teamA);
         Member member2 = new Member("member2", 20, teamB);
         Member member3 = new Member("member3", 10);
-        Member member4 = new Member("member4", 20);
+        Member member4 = new Member("member4", 100);
 
         em.persist(member1);
         em.persist(member2);
@@ -240,7 +241,57 @@ public class QuerydslBasicTest {
         assertThat(loaded).isTrue();
     }
 
-    @
+    /**
+     * 나이가 가장 많은 회원 조회
+     */
+    @Test
+    void subQuery() {
+        QMember memberSub = new QMember("memberSub");
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .where(
+                        member.age.eq(
+                                JPAExpressions
+                                        .select(memberSub.age.max())
+                                        .from(memberSub)
+                        )
+                )
+                .fetch();
+
+        assertThat(result).extracting("age").containsExactly(100);
+
+    }
+
+    /**
+     * 나이가 평균 이상인 회원 조회
+     */
+    @Test
+    void subQueryGoe() {
+        QMember memberSub = new QMember("memberSub");
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .where(
+                        member.age.goe(
+                                JPAExpressions
+                                        .select(memberSub.age.avg())
+                                        .from(memberSub)
+                        ))
+                .fetch();
+
+        assertThat(result.size()).isEqualTo(1);
+    }
+
+    @Test
+    void concat() {
+        List<String> result = queryFactory
+                .select(member.memberName.concat("🤓").concat(member.age.stringValue()))
+                .from(member)
+                .fetch();
+        for (String s : result) {
+            System.out.println(s);
+        }
+    }
+
 
 
 }

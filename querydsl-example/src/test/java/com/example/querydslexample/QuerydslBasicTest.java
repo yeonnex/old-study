@@ -1,6 +1,7 @@
 package com.example.querydslexample;
 
 import com.example.querydslexample.dto.MemberDto;
+import com.example.querydslexample.dto.QMemberDto;
 import com.example.querydslexample.dto.UserDto;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
@@ -347,7 +348,16 @@ public class QuerydslBasicTest {
         for (UserDto userDto : result) {
             System.out.println(userDto);
         }
+    }
 
+    @Test
+    void findDtoByQueryProjection() {
+        List<MemberDto> result = queryFactory
+                .select(new QMemberDto(member.memberName, member.age))
+                .from(member)
+                .fetch();
+
+        assertThat(result.get(0)).isInstanceOf(MemberDto.class);
     }
 
 

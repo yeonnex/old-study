@@ -50,7 +50,7 @@ class MemberJpaRepositoryTest {
     }
 
     @Test
-    void searchTest() {
+    void searchTest_builder() {
         Team teamA = new Team("teamA");
         Team teamB = new Team("teamB");
 
@@ -75,6 +75,35 @@ class MemberJpaRepositoryTest {
         List<MemberTeamDto> result = repository.searchByBuilder(condition);
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.get(0).getMemberName()).isEqualTo("member2");
+    }
+
+
+    @Test
+    void search_where() {
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+
+        em.persist(teamA);
+        em.persist(teamB);
+
+        Member member1 = new Member("member1", 10, teamA);
+        Member member2 = new Member("member2", 20, teamB);
+        Member member3 = new Member("member3", 30);
+        Member member4 = new Member("member4", 40);
+
+        em.persist(member1);
+        em.persist(member2);
+        em.persist(member3);
+        em.persist(member4);
+
+        MemberSearchCondition condition = new MemberSearchCondition();
+        condition.setAgeGoe(31);
+        condition.setAgeLoe(45);
+
+        List<MemberTeamDto> result = repository.searchByWhere(condition);
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).extracting("memberName").isEqualTo("member4");
+
     }
 
 }

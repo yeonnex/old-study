@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>타임리프 링크처리</h1>
+    <a th:href="@{/hello/ming}">밍페이지로 이동</a>
+    <br/>
+    <a th:href="@{https://www.thymeleaf.org/}">타임리프 공식 페이지 이동</a>
+    <h1>상품 리스트 출력</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <td>순번</td>
+                <td>상품명</td>
+                <td>상품설명</td>
+                <td>상품등록일</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="itemDto, status: ${itemDtoList}">
+                <td th:if="${status.odd}" th:text="홀수"></td>
+                <td th:unless="${status.odd}" th:text="짝수"></td>
+                <td th:text="${itemDto.itemNm}"></td>
+                <td th:text="${itemDto.itemDetail}"></td>
+                <td th:text="${itemDto.price}"></td>
+                <td th:text="${itemDto.regTime}"></td>
+                <td th:text="${itemDto.updateTime}"></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h1>타임리프 쿼리 파리미터</h1>
+    <a th:href="@{/hello/items(itemNm = 'sweetpotato', itemDetail = 'tasty')}">타임리프 파라미터 전달</a>
+</body>
+</html>

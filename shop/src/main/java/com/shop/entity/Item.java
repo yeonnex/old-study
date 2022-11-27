@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 @Table(name = "item")
 @Entity
-public class Item {
+public class Item extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id; // 상품 코드

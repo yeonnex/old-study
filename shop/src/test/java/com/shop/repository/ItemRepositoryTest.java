@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
@@ -19,6 +21,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Transactional
+@WithMockUser(username = "tester", roles = "user")
 class ItemRepositoryTest {
     @Autowired
     ItemRepository itemRepository;
@@ -99,8 +103,6 @@ class ItemRepositoryTest {
             item.setItemSellStatus(status);
 
             item.setStockNumber(100);
-            item.setRegTime(LocalDateTime.now());
-            item.setUpdateTime(LocalDateTime.now());
 
             itemRepository.save(item);
         }

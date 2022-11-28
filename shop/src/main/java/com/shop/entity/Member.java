@@ -34,7 +34,7 @@ public class Member extends BaseTimeEntity{
         member.setName(form.getName());
         member.setEmail(form.getEmail());
         member.setAddress(form.getAddress());
-        member.setRole(Role.USER);
+        member.setRole(Role.ADMIN);
         member.setPassword(passwordEncoder.encode(form.getPassword()));
 
         return member;

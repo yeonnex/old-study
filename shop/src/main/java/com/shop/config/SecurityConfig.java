@@ -38,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 자원 권한 설정
         http
                 .authorizeRequests()
-                .mvcMatchers("/", "/members/**", "/item/**", "/images/**", "/main").permitAll();
+                .mvcMatchers("/", "/members/**", "/item/**", "/images/**", "/main", "/login").permitAll();
         http
                 .authorizeRequests()
                 .mvcMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated();

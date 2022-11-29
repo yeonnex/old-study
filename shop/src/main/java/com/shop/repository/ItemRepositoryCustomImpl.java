@@ -4,20 +4,23 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shop.constant.ItemSellStatus;
+import com.shop.dto.ItemFormDto;
 import com.shop.dto.ItemSearchDto;
+import com.shop.dto.MainItemDto;
+import com.shop.dto.QMainItemDto;
 import com.shop.entity.Item;
-import com.shop.entity.QItem;
+import com.shop.entity.QItemImg;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.thymeleaf.util.StringUtils;
 
 import javax.persistence.EntityManager;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.shop.entity.QItem.item;
+import static com.shop.entity.QItemImg.itemImg;
 
 
 public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
@@ -46,10 +49,37 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
         return new PageImpl<>(content, pageable, total);
     }
 
+    @Override
+    public Page<MainItemDto> getMainItemPage(ItemSearchDto itemSearchDto, Pageable pageable) {
+        QueryResults<MainItemDto> results = queryFactory
+                .select(
+                        new QMainItemDto(
+                                item.id,
+                                item.itemNm,
+                                item.itemDetail,
+                                itemImg.imgUrl,
+                                item.price
+                        )
+                )
+                .from(itemImg)
+                .join(itemImg.item, item)
+                .where(itemImg.isRepImg.eq("Y"))
+                .where(itemNmLike(itemSearchDto.getSearchQuery()))
+                .orderBy(item.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        List<MainItemDto> content = results.getResults();
+        long total = results.getTotal();
+        return new PageImpl<>(content, pageable, total);
+    }
+
     // ===== private method =====
 
     /**
      * 상품의 상태 (SELL, SOLDOUT) 을 기준으로 상품을 조회한다.
+     *
      * @param searchSellStatus
      * @return
      */
@@ -59,6 +89,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
 
     /**
      * 현재 시간을 기준으로 "1d" (1일전), "1w" (1주일전), "1m" (한달전), "6m" (6개월전) 에 등록된 상품을 조회한다.
+     *
      * @param searchDateType
      * @return
      */
@@ -87,5 +118,9 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
         }
 
         return null; // null 이면 where 절에서 조건없이 검색
+    }
+
+    private BooleanExpression itemNmLike(String searchQuery) {
+        return StringUtils.isEmpty(searchQuery) ? null : item.itemNm.like("%" + searchQuery + "%");
     }
 }

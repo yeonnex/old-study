@@ -20,7 +20,6 @@ import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/admin")
 public class ItemController {
     private final ItemService itemService;
 
@@ -29,7 +28,7 @@ public class ItemController {
      * @param model
      * @return
      */
-    @GetMapping("/item/new")
+    @GetMapping("/admin/item/new")
     public String itemForm(Model model) {
         model.addAttribute("itemFormDto", new ItemFormDto());
         return "/item/itemForm";
@@ -43,7 +42,7 @@ public class ItemController {
      * @param itemImgFileList
      * @return
      */
-    @PostMapping("/item/new")
+    @PostMapping("/admin/item/new")
     public String itemNew(@Valid ItemFormDto form,
                           BindingResult bindingResult,
                           Model model,
@@ -71,7 +70,7 @@ public class ItemController {
      * @param model
      * @return
      */
-    @GetMapping("/item/{itemId}")
+    @GetMapping("/admin/item/{itemId}")
     public String itemDetail(@PathVariable("itemId")Long itemId, Model model) {
         try {
             ItemFormDto itemFormDto = itemService.getItemDetail(itemId);
@@ -83,7 +82,7 @@ public class ItemController {
         return "item/itemForm";
     }
 
-    @PostMapping("/item/{itemId}")
+    @PostMapping("/admin/item/{itemId}")
     public String itemUpdate(@Valid ItemFormDto form,
                              BindingResult bindingResult,
                              @RequestParam("itemImgFile") List<MultipartFile> itemImgFileList,
@@ -108,7 +107,7 @@ public class ItemController {
     /**
      * 상품 목록을 반환한다. 페이징 가능
      */
-    @GetMapping(value = {"/items", "/items/{page}"})
+    @GetMapping(value = {"/admin/items", "/items/{page}"})
     public String itemManage(ItemSearchDto itemSearchDto,
                              @PathVariable("page") Optional<Integer> page,
                              Model model){
@@ -118,6 +117,14 @@ public class ItemController {
         model.addAttribute("itemSearchDto", itemSearchDto);
         model.addAttribute("maxPage", 5);
         return "item/itemMng";
+    }
+
+    @GetMapping("/item/{itemId}")
+    public String itemDetail(Model model, @PathVariable("itemId") Long itemId) {
+        ItemFormDto itemFormDto = itemService.getItemDetail(itemId);
+        model.addAttribute("item", itemFormDto);
+
+        return "item/itemDetail";
     }
 
 }

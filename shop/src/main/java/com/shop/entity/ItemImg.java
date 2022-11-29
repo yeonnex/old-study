@@ -20,7 +20,7 @@ public class ItemImg extends BaseTimeEntity{
     private String imgName; // 이미지 파일명
     private String oriImgName; // 원본 이미지 파일명
     private String imgUrl; // 이미지 조회경로
-    private Boolean isRepImg; // 대표 이미지 여부
+    private String isRepImg; // 대표 이미지 여부
 
     public void updateItemImg(String oriImgName, String imgName, String imgUrl) {
         this.oriImgName = oriImgName;

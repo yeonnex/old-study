@@ -13,7 +13,7 @@ public class ItemImgDto {
     private String imgName;
     private String oriImgName;
     private String imgUrl;
-    private boolean isRepImg;
+    private String isRepImg;
     private static ModelMapper modelMapper = new ModelMapper();
 
     public static ItemImgDto of(ItemImg itemImg) {

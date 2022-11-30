@@ -24,7 +24,7 @@ public class Orders extends BaseEntity {
     private LocalDateTime orderDate; // 주문일
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus status; // 주문상태
+    private OrderStatus orderStatus; // 주문상태
 
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
@@ -37,13 +37,20 @@ public class Orders extends BaseEntity {
         orderItem.setOrder(this);
     }
 
+    public void cancelOrder() {
+        this.orderStatus = OrderStatus.CANCEL;
+        for (OrderItem orderItem : orderItems) {
+            orderItem.cancel();
+        }
+    }
+
     public static Orders createOrder(Member member, List<OrderItem> orderItemList) {
         Orders order = new Orders();
         order.setMember(member);
         for (OrderItem orderItem : orderItemList) {
             order.addOrderItem(orderItem);
         }
-        order.setStatus(OrderStatus.ORDER);
+        order.setOrderStatus(OrderStatus.ORDER);
         order.setOrderDate(LocalDateTime.now());
         return order;
     }

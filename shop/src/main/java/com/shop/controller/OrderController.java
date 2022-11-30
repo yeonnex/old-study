@@ -63,4 +63,21 @@ public class OrderController {
 
         return "order/orderHist";
     }
+
+    /**
+     * 취소할 주문할 번호는 자바스크립트에서 조작이 가능하므로 다른 사람의 주문을 취소하지 못하도록 주문 취소 권한
+     * 검사 뒤 주문 취소 로직을 호출한다.
+     * @param orderId
+     * @param principal
+     * @return
+     */
+    @PostMapping("/order/{orderId}/cancel")
+    public ResponseEntity cancelOrder(@PathVariable("orderId")Long orderId, Principal principal) {
+        if (!orderService.validateOrder(orderId, principal.getName())){
+            return new ResponseEntity<String>("주문 취소 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        orderService.cancelOrder(orderId);
+        return new ResponseEntity<Long>(orderId, HttpStatus.OK);
+    }
 }
